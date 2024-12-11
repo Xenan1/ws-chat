@@ -2,8 +2,12 @@ version: "3.3"
 
 services:
   php:
-    image: xenan1/php-composer:1.1
+    build:
+      dockerfile: deploy/docker/Php.Dockerfile
+      context: .
     restart: unless-stopped
+    env_file:
+      - .env
     volumes:
       - ./project:/var/www/html
 

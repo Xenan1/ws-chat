@@ -1,29 +1,68 @@
-FROM php:8.4-fpm
+# Используем базовый образ PHP на Alpine
+FROM php:8.4-fpm-alpine3.19 as base
 
-RUN groupadd -g 1000 usergroup && useradd -u 1000 -g usergroup -m user
-
-RUN apt-get update && apt-get install -y \
+# Обновление индекса пакетов и установка зависимостей
+RUN apk update && apk add --no-cache \
     libzip-dev \
-    unzip \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+    zip \
+    cronie \
+    supervisor \
+    gzip \
+    wget \
+    linux-headers \
+    autoconf \
+    g++ \
+    make \
+    && rm -rf /var/cache/apk/*
 
-RUN docker-php-ext-install zip
+# Установка PHP расширений через скрипт install-php-extensions
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
+RUN install-php-extensions pdo_mysql zip sockets intl imap pcntl
 
-RUN pecl install xdebug && docker-php-ext-enable xdebug
+# Попытка установить Xdebug через PECL, в случае ошибки установим из исходников
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+ENV PHP_IDE_CONFIG 'serverName=debug.php'
 
-RUN echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+RUN set -eux; \
+    if ! install-php-extensions xdebug; then \
+        wget https://xdebug.org/files/xdebug-3.3.2.tgz \
+        && tar -xzf xdebug-3.3.2.tgz \
+        && cd xdebug-3.3.2 \
+        && phpize \
+        && ./configure --enable-xdebug \
+        && make \
+        && make install; \
+        echo "zend_extension=xdebug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    fi \
     && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+    && echo "xdebug.client_port=9001" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
-RUN chown -R user:usergroup /var/www /usr/local/bin/composer
+# Установка Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-USER user
+# Настройки cron и прав доступа
+RUN touch /var/log/cron.log \
+    && chmod 0644 /var/log/cron.log \
+    && printf '* * * * * www-data cd /var/www/html && php artisan schedule:run >> /dev/null 2>&1\n#' >> /etc/cron.d/laravel-cron \
+    && crontab /etc/cron.d/laravel-cron \
+    && mkdir -p /var/log/supervisor /var/log/php-fpm /var/log/xdebug \
+    && touch /var/log/xdebug.log \
+    && chmod 0755 /var/log/xdebug.log
 
-EXPOSE 9000
+# Настройки PHP для Laravel
+RUN echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/settings.ini
 
-CMD ["php-fpm"]
+# Копирование конфигурации Supervisor
+COPY supervisor/conf.d/* /etc/supervisor/conf.d/
+
+# Рабочий каталог для Laravel
+WORKDIR /var/www
+# Старт через Supervisor
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
+# Очистка после установки
+RUN apk del autoconf g++ make \
+    && rm -rf /tmp/* /var/cache/apk/*

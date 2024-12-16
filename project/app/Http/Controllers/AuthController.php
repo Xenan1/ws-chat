@@ -18,10 +18,7 @@ class AuthController extends Controller
 {
     public function __construct(
         protected AuthLogger $logger,
-    )
-    {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
-    }
+    ) {}
 
     public function login(LoginRequest $request): JsonResponse
     {

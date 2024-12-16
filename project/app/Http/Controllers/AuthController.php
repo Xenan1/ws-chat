@@ -21,8 +21,7 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $credentials = new CredentialsDTO($data['login'], $data['password']);
+        $credentials = new CredentialsDTO($request->getLogin(), $request->getPassword());
 
         return $this->getLoginResponse($credentials);
     }

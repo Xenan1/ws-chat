@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\DTO\CredentialsDTO;
+use App\DTO\TokenDTO;
 use App\DTO\UserDTO;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterUserRequest;
-use App\Models\User;
+use App\Http\Resources\TokenResource;
+use App\Http\Resources\UserResource;
+use App\Services\RegisterService;
 use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
@@ -18,15 +21,14 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $credentials = new CredentialsDTO($data['login'], $data['password']);
+        $credentials = new CredentialsDTO($request->getLogin(), $request->getPassword());
 
         return $this->getLoginResponse($credentials);
     }
 
-    public function me(): JsonResponse
+    public function me(): UserResource
     {
-        return response()->json(auth()->user());
+        return new UserResource(auth()->user());
     }
 
     public function logout(): JsonResponse
@@ -36,34 +38,34 @@ class AuthController extends Controller
         return response()->json(['message' => 'Successfully logged out']);
     }
 
-    public function refresh(): JsonResponse
+    public function refresh(): TokenResource
     {
         return $this->respondWithToken(auth()->refresh());
     }
 
-    public function register(RegisterUserRequest $request): JsonResponse
+    public function register(RegisterUserRequest $request, RegisterService $service): JsonResponse
     {
         $userData = UserDTO::fromRequest($request);
-        User::query()->create($userData->toArray());
+        $service->registerUser($userData);
 
         return $this->getLoginResponse($userData->getCredentials());
     }
 
-    protected function respondWithToken($token): JsonResponse
+    protected function respondWithToken($token): TokenResource
     {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
-        ]);
+        $token = new TokenDTO($token, 'bearer', auth()->factory()->getTTL() * 60);
+
+        return new TokenResource($token);
     }
 
-    public function getLoginResponse(CredentialsDTO $credentials): JsonResponse
+    protected function getLoginResponse(CredentialsDTO $credentials): JsonResponse
     {
         $token = auth()->attempt($credentials->toArray());
 
-        return !$token
+        $response = !$token
             ? response()->json(['error' => 'Unauthorized'], 401)
             : $this->respondWithToken($token);
+
+        return response()->json($response);
     }
 }

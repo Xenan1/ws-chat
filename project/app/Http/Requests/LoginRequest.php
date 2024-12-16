@@ -27,4 +27,14 @@ class LoginRequest extends FormRequest
             'password' => ['string', 'required', 'min:8'],
         ];
     }
+
+    public function getLogin(): string
+    {
+        return $this->input('login');
+    }
+
+    public function getPassword(): string
+    {
+        return $this->input('password');
+    }
 }

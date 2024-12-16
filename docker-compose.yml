@@ -18,7 +18,7 @@ services:
   php:
     build:
       dockerfile: ./deploy/docker/Php.Dockerfile
-      context: ./project
+      context: ./
     restart: unless-stopped
     expose:
       - 9000

@@ -56,7 +56,7 @@ RUN touch /var/log/cron.log \
 RUN echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/settings.ini
 
 # Копирование конфигурации Supervisor
-COPY supervisor/conf.d/* /etc/supervisor/conf.d/
+COPY deploy/supervisor/conf.d/* /etc/supervisor/conf.d/
 
 # Рабочий каталог для Laravel
 WORKDIR /var/www

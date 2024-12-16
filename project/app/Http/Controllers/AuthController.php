@@ -44,10 +44,10 @@ class AuthController extends Controller
         return $this->respondWithToken(auth()->refresh());
     }
 
-    public function register(RegisterUserRequest $request): JsonResponse
+    public function register(RegisterUserRequest $request, RegisterService $service): JsonResponse
     {
         $userData = UserDTO::fromRequest($request);
-        User::query()->create($userData->toArray());
+        $service->registerUser($userData);
 
         return $this->getLoginResponse($userData->getCredentials());
     }

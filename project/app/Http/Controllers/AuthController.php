@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\DTO\CredentialsDTO;
+use App\DTO\TokenDTO;
 use App\DTO\UserDTO;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterUserRequest;
+use App\Http\Resources\TokenResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
@@ -51,11 +53,9 @@ class AuthController extends Controller
 
     protected function respondWithToken($token): JsonResponse
     {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
-        ]);
+        $token = new TokenDTO($token, 'bearer', auth()->factory()->getTTL() * 60);
+
+        return response()->json(new TokenResource($token));
     }
 
     public function getLoginResponse(CredentialsDTO $credentials): JsonResponse

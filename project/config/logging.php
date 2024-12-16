@@ -130,7 +130,9 @@ return [
 
         LogChannels::Auth->value => [
             'driver' => 'single',
-            'path' => storage_path('logs/auth.log'),
+            'path' => storage_path(
+                sprintf('logs/%s/auth.log', LogChannels::Auth->value)
+            ),
         ],
     ],
 

@@ -9,7 +9,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Http\Resources\TokenResource;
 use App\Http\Resources\UserResource;
-use App\Models\User;
+use App\Services\RegisterService;
 use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller

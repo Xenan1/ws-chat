@@ -38,7 +38,7 @@ class AuthController extends Controller
         return response()->json(['message' => 'Successfully logged out']);
     }
 
-    public function refresh(): JsonResponse
+    public function refresh(): TokenResource
     {
         return $this->respondWithToken(auth()->refresh());
     }
@@ -51,19 +51,21 @@ class AuthController extends Controller
         return $this->getLoginResponse($userData->getCredentials());
     }
 
-    protected function respondWithToken($token): JsonResponse
+    protected function respondWithToken($token): TokenResource
     {
         $token = new TokenDTO($token, 'bearer', auth()->factory()->getTTL() * 60);
 
-        return response()->json(new TokenResource($token));
+        return new TokenResource($token);
     }
 
-    public function getLoginResponse(CredentialsDTO $credentials): JsonResponse
+    protected function getLoginResponse(CredentialsDTO $credentials): JsonResponse
     {
         $token = auth()->attempt($credentials->toArray());
 
-        return !$token
+        $response = !$token
             ? response()->json(['error' => 'Unauthorized'], 401)
             : $this->respondWithToken($token);
+
+        return response()->json($response);
     }
 }

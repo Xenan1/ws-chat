@@ -1,5 +1,6 @@
 <?php
 
+use App\Logging\Enum\LogChannels;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
@@ -127,6 +128,12 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        LogChannels::Auth->value => [
+            'driver' => 'single',
+            'path' => storage_path(
+                sprintf('logs/%s/auth.log', LogChannels::Auth->value)
+            ),
+        ],
     ],
 
 ];

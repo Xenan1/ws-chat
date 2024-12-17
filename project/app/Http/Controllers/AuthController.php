@@ -9,15 +9,16 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Http\Resources\TokenResource;
 use App\Http\Resources\UserResource;
+use App\Logging\AuthLogger;
+use App\Logging\Enum\LogLevels;
 use App\Services\RegisterService;
 use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
-    }
+    public function __construct(
+        protected AuthLogger $logger,
+    ) {}
 
     public function login(LoginRequest $request): JsonResponse
     {
@@ -62,10 +63,12 @@ class AuthController extends Controller
     {
         $token = auth()->attempt($credentials->toArray());
 
-        $response = !$token
-            ? response()->json(['error' => 'Unauthorized'], 401)
-            : $this->respondWithToken($token);
+        if (!$token) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
-        return response()->json($response);
+        $this->logger->log(LogLevels::Info, 'User logged in', ['user_login' => $credentials->login]);
+
+        return response()->json($this->respondWithToken($token));
     }
 }

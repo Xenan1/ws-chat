@@ -14,6 +14,7 @@ class ChatController extends Controller
     public function createMessage(CreateMessageRequest $request): JsonResponse
     {
         $message = $this->chatService->createMessage($request->getMessageData());
-        dispatch(new SendMessageByWebSocket());
+        dispatch(new SendMessageByWebSocket($message));
+        return response()->json(['message' => 'success'], 201);
     }
 }

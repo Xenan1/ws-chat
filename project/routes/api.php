@@ -16,6 +16,9 @@ Route::group([
         Route::post('refresh', [AuthController::class, 'refresh']);
         Route::get('me', [AuthController::class, 'me']);
 
-        Route::post('messages', [ChatController::class, 'createMessage']);
     });
+});
+
+Route::middleware('auth:api')->group(function () {
+    Route::post('messages', [ChatController::class, 'createMessage']);
 });

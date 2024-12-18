@@ -77,11 +77,11 @@ return [
             'driver' => 'null',
         ],
 
-        'ws' => [
+        'socket' => [
             'driver' => 'custom',
-            'host' => 'ws://ws',
-            'port' => 80
+            'class' => \App\Broadcasting\WebSocketBroadcaster::class
         ],
     ],
 
+    'url' => 'ws://ws:80'
 ];

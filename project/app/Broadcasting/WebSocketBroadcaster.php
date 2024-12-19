@@ -14,7 +14,7 @@ class WebSocketBroadcaster implements Broadcaster
 
     public function __construct(protected ChatLogger $logger)
     {
-        $this->client = new Client('ws://ws:80');
+        $this->client = new Client(config('broadcasting.url'));
     }
 
     public function auth($request)

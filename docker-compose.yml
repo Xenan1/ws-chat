@@ -16,6 +16,7 @@ services:
       - pet-network
 
   php:
+    container_name: php
     build:
       dockerfile: ./deploy/docker/Php.Dockerfile
       context: ./
@@ -30,6 +31,8 @@ services:
       - ./project:/var/www/html
     networks:
       - pet-network
+    env_file:
+      - .env
 
   mysql:
     image: mysql:9

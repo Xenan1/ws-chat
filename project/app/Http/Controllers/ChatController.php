@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DTO\DialogDTO;
 use App\Http\Requests\CreateMessageRequest;
 use App\Http\Requests\GetDialogRequest;
+use App\Http\Resources\CommonResponseResource;
 use App\Http\Resources\DialogResource;
 use App\Jobs\SendMessageByWebSocket;
 use App\Models\User;
@@ -19,7 +20,7 @@ class ChatController extends Controller
     {
         $message = $this->chatService->createMessage($request->getMessageData());
         dispatch(new SendMessageByWebSocket($message));
-        return response()->json(['message' => 'success'], 201);
+        return response()->json(new CommonResponseResource(true), 201);
     }
 
     public function getDialog(GetDialogRequest $request): DialogResource

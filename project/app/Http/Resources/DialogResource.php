@@ -24,7 +24,7 @@ class DialogResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'avatar' => $this->dialog->avatar?->src,
+            'avatar' => $this->dialog->avatar?->getSrc(),
             'name' => $this->dialog->chatPartner->name,
             'messages' => $this->dialog->messages->map(function (Message $message) {
                 return [

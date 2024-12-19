@@ -27,4 +27,9 @@ class GetDialogRequest extends FormRequest
             'chat_partner_id' => ['required', Rule::exists('users', 'id')],
         ];
     }
+
+    public function getChatPartnerId(): int
+    {
+        return $this->input('chat_partner_id');
+    }
 }

@@ -25,7 +25,7 @@ class ChatController extends Controller
     public function getDialog(GetDialogRequest $request): DialogResource
     {
         $user = auth()->user();
-        $chatPartner = User::query()->find($request->input('chat_partner_id'));
+        $chatPartner = User::query()->find($request->getChatPartnerId());
         $messages = $this->chatService->getDialogMessages($user->id, $chatPartner->id);
 
         return new DialogResource(

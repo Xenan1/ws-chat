@@ -13,4 +13,9 @@ class Image extends Model
     {
         return $this->morphTo();
     }
+
+    public function getSrc(): string
+    {
+        return $this->src;
+    }
 }

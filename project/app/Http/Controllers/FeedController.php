@@ -18,8 +18,15 @@ class FeedController extends Controller
 
     public function likePost(LikePostRequest $request): CommonResponse
     {
-        auth()->user()->likes()->attach($request->getPostId());
+        auth()->user()->likePost($request->getPostId());
 
         return new CommonResponse(true, 200);
+    }
+
+    public function unlikePost(LikePostRequest $request): CommonResponse
+    {
+        auth()->user()->unlikePost($request->getPostId());
+
+        return new CommonResponse(true, 204);
     }
 }

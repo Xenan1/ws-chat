@@ -30,6 +30,11 @@ Route::group([
 
     Route::prefix('feed')->group(function () {
         Route::get('/', [FeedController::class, 'getFeed']);
-        Route::post('like', [FeedController::class, 'likePost']);
+
+        Route::prefix('like')->group(function () {
+            Route::post('/', [FeedController::class, 'likePost']);
+            Route::delete('/', [FeedController::class, 'unlikePost']);
+        });
+
     });
 });

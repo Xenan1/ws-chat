@@ -60,7 +60,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->morphOne(Image::class, 'imageable');
     }
 
-    public function likedPosts(): BelongsToMany
+    public function likes(): BelongsToMany
     {
         return $this->belongsToMany(Post::class, 'likes');
     }

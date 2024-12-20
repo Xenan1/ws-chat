@@ -30,5 +30,6 @@ Route::group([
 
     Route::prefix('feed')->group(function () {
         Route::get('/', [FeedController::class, 'getFeed']);
+        Route::post('like', [FeedController::class, 'likePost']);
     });
 });

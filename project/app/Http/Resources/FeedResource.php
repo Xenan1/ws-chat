@@ -24,6 +24,7 @@ class FeedResource extends BaseJsonResource
         return [
             'posts' => $this->posts->map(function (Post $post) {
                 return [
+                    'id' => $post->id,
                     'author' => new UserResource($post->author),
                     'text' => $post->text,
                     'likes' => $post->getLikesCount(),

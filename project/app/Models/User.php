@@ -101,15 +101,4 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->avatar;
     }
-
-
-    public function likePost(int $postId): void
-    {
-        $this->likes()->attach($postId);
-    }
-
-    public function unlikePost(int $postId): void
-    {
-        $this->likes()->detach($postId);
-    }
 }

@@ -6,6 +6,7 @@ use App\Actions\GetUserFeed;
 use App\Http\Requests\LikePostRequest;
 use App\Http\Resources\FeedResource;
 use App\Http\Responses\CommonResponse;
+use App\Services\UserService;
 
 class FeedController extends Controller
 {
@@ -16,16 +17,16 @@ class FeedController extends Controller
         return new FeedResource($posts);
     }
 
-    public function likePost(LikePostRequest $request): CommonResponse
+    public function likePost(LikePostRequest $request, UserService $service): CommonResponse
     {
-        auth()->user()->likePost($request->getPostId());
+        $service->likePost(auth()->user(), $request->getPostId());
 
         return new CommonResponse(true, 200);
     }
 
-    public function unlikePost(LikePostRequest $request): CommonResponse
+    public function unlikePost(LikePostRequest $request, UserService $service): CommonResponse
     {
-        auth()->user()->unlikePost($request->getPostId());
+        $service->unlikePost(auth()->user(), $request->getPostId());
 
         return new CommonResponse(true, 204);
     }

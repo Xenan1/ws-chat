@@ -20,6 +20,7 @@ class GetUserFeed
         $tagWeights = $this->getTagsWeightSubquery($userId);
 
         return Post::query()
+            ->with(['author', 'likes', 'tags'])
             ->leftJoin('posts_tags', 'posts.id', '=', 'posts_tags.post_id')
             ->leftJoinSub($tagWeights, 'tag_weights', 'posts_tags.tag_id', '=', 'tag_weights.tag_id')
             ->leftJoin('posts_views', function (JoinClause $join) use ($userId) {

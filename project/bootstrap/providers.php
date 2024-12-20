@@ -1,8 +1,7 @@
 <?php
 
-use App\Providers\BroadcastServiceProvider;
-
 return [
     App\Providers\AppServiceProvider::class,
-    BroadcastServiceProvider::class,
+    App\Providers\BroadcastServiceProvider::class,
+    App\Providers\TelescopeServiceProvider::class,
 ];

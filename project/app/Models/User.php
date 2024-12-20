@@ -10,6 +10,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $login
+ * @property string $password
+ * @property Image $avatar
+ */
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<UserFactory> */
@@ -60,7 +67,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->morphOne(Image::class, 'imageable');
     }
 
-    public function likes(): BelongsToMany
+    public function likedPosts(): BelongsToMany
     {
         return $this->belongsToMany(Post::class, 'likes');
     }
@@ -69,6 +76,32 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(Post::class, 'posts_views');
     }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getLogin(): string
+    {
+        return $this->login;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function getAvatar(): Image
+    {
+        return $this->avatar;
+    }
+
 
     public function likePost(int $postId): void
     {

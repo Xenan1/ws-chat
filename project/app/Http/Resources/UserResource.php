@@ -22,9 +22,9 @@ class UserResource extends BaseJsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->user->id,
-            'name' => $this->user->name,
-            'avatar' => $this->user->avatar?->getSrc(),
+            'id' => $this->user->getId(),
+            'name' => $this->user->getName(),
+            'avatar' => $this->user->getAvatar()?->getSrc(),
         ];
     }
 }

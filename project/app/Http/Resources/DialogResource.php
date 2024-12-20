@@ -27,9 +27,9 @@ class DialogResource extends BaseJsonResource
             'name' => $this->dialog->chatPartner->name,
             'messages' => $this->dialog->messages->map(function (Message $message) {
                 return [
-                    'name' => $message->sender->name,
-                    'text' => $message->text,
-                    'datetime' => $message->created_at,
+                    'name' => $message->getSenderName(),
+                    'text' => $message->getText(),
+                    'datetime' => $message->getCreatedAt(),
                 ];
             })
         ];

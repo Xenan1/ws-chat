@@ -141,6 +141,13 @@ return [
                 sprintf('logs/%s/chat.log', LogChannels::Chat->value)
             ),
         ],
+
+        LogChannels::Notifications->value => [
+            'driver' => 'single',
+            'path' => storage_path(
+                sprintf('logs/%s/chat.log', LogChannels::Notifications->value)
+            ),
+        ],
     ],
 
 ];

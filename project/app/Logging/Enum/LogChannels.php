@@ -6,4 +6,5 @@ enum LogChannels: string
 {
     case Auth = 'auth';
     case Chat = 'chat';
+    case Notifications = 'notifications';
 }

@@ -19,8 +19,10 @@ RUN apk update && apk add --no-cache \
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
 RUN install-php-extensions pdo_mysql zip sockets intl imap pcntl
 
-# Попытка установить Xdebug через PECL, в случае ошибки установим из исходников
+# Установка PHP Redis расширения через PECL
+RUN install-php-extensions redis
 
+# Попытка установить Xdebug через PECL, в случае ошибки установим из исходников
 ENV PHP_IDE_CONFIG 'serverName=debug.php'
 
 RUN set -eux; \

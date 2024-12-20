@@ -4,9 +4,8 @@ namespace App\Http\Resources;
 
 use App\DTO\TokenDTO;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
-class TokenResource extends JsonResource
+class TokenResource extends BaseJsonResource
 {
     public function __construct(TokenDTO $resource)
     {

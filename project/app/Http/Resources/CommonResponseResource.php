@@ -2,9 +2,7 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
-
-class CommonResponseResource extends JsonResource
+class CommonResponseResource extends BaseJsonResource
 {
     protected bool $success;
 

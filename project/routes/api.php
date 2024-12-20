@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\FeedController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
@@ -21,8 +22,19 @@ Route::group([
 
 Route::group([
     'middleware' => 'auth:api',
-    'prefix' => 'chat',
 ], function () {
-    Route::post('messages', [ChatController::class, 'createMessage']);
-    Route::get('dialog', [ChatController::class, 'getDialog']);
+    Route::prefix('chat')->group(function () {
+        Route::post('messages', [ChatController::class, 'createMessage']);
+        Route::get('dialog', [ChatController::class, 'getDialog']);
+    });
+
+    Route::prefix('feed')->group(function () {
+        Route::get('/', [FeedController::class, 'getFeed']);
+
+        Route::prefix('like')->group(function () {
+            Route::post('/', [FeedController::class, 'likePost']);
+            Route::delete('/', [FeedController::class, 'unlikePost']);
+        });
+
+    });
 });

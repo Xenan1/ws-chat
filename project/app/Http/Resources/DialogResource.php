@@ -5,9 +5,8 @@ namespace App\Http\Resources;
 use App\DTO\DialogDTO;
 use App\Models\Message;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 
-class DialogResource extends JsonResource
+class DialogResource extends BaseJsonResource
 {
     protected DialogDTO $dialog;
 
@@ -28,9 +27,9 @@ class DialogResource extends JsonResource
             'name' => $this->dialog->chatPartner->name,
             'messages' => $this->dialog->messages->map(function (Message $message) {
                 return [
-                    'name' => $message->sender->name,
-                    'text' => $message->text,
-                    'datetime' => $message->created_at,
+                    'name' => $message->getSenderName(),
+                    'text' => $message->getText(),
+                    'datetime' => $message->getCreatedAt(),
                 ];
             })
         ];

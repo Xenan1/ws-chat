@@ -15,7 +15,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property string $name
  * @property string $login
  * @property string $password
- * @property Image $avatar
+ * @property ?Image $avatar
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -97,7 +97,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->password;
     }
 
-    public function getAvatar(): Image
+    public function getAvatar(): ?Image
     {
         return $this->avatar;
     }

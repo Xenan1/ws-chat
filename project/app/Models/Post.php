@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @property int $id
+ * @property string $text
+ * @property User $author
+ * @property string $created_at
+ */
 class Post extends Model
 {
     protected $guarded = [];
@@ -28,5 +34,25 @@ class Post extends Model
     public function getLikesCount(): int
     {
         return $this->likes->count();
+    }
+
+    public function getText(): string
+    {
+        return $this->text;
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getAuthor(): User
+    {
+        return $this->author;
+    }
+
+    public function getCreatedAt(): string
+    {
+        return $this->created_at;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Cache\CacheKeyStorage;
+use App\Cache\CacheService;
 use App\DTO\DialogDTO;
 use App\Http\Requests\CreateMessageRequest;
 use App\Http\Requests\GetDialogRequest;
@@ -22,14 +24,18 @@ class ChatController extends Controller
         return new CommonResponse(true, 201);
     }
 
-    public function getDialog(GetDialogRequest $request): DialogResource
+    public function getDialog(GetDialogRequest $request, CacheService $cache): DialogResource
     {
         $user = auth()->user();
         $chatPartner = User::query()->find($request->getChatPartnerId());
         $messages = $this->chatService->getDialogMessages($user->id, $chatPartner->id);
+        $dialog = new DialogDTO($user, $chatPartner, $messages, $chatPartner->avatar);
 
-        return new DialogResource(
-            new DialogDTO($user, $chatPartner, $messages, $chatPartner->avatar)
+        return $cache->remember(
+            CacheKeyStorage::dialog($user->id, $chatPartner->id),
+            function () use ($dialog) {
+                return new DialogResource($dialog);
+            }
         );
     }
 }

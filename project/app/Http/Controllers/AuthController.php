@@ -20,6 +20,9 @@ class AuthController extends Controller
         protected AuthLogger $logger,
     ) {}
 
+    /**
+     * @unauthenticated
+     */
     public function login(LoginRequest $request): JsonResponse
     {
         $credentials = new CredentialsDTO($request->getLogin(), $request->getPassword());
@@ -44,6 +47,9 @@ class AuthController extends Controller
         return $this->respondWithToken(auth()->refresh());
     }
 
+    /**
+     * @unauthenticated
+     */
     public function register(RegisterUserRequest $request, RegisterService $service): JsonResponse
     {
         $userData = UserDTO::fromRequest($request);

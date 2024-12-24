@@ -41,7 +41,7 @@ class MessageReceived implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'sender' => $this->sender->id,
+            'sender' => $this->sender->getName(),
             'recipient' => $this->recipient->id,
             'text' => $this->message->text,
             'date' => $this->message->created_at,

@@ -18,7 +18,9 @@ wss.on('connection', function connection(ws) {
 
         if (message.type === 'register') {
 
-            clients.set(message.user_id, ws)
+            if (!clients.has(message.user_id)) {
+                clients.set(message.user_id, ws)
+            }
 
         } else if (message.type === 'message') {
 

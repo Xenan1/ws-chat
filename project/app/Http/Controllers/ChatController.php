@@ -7,6 +7,7 @@ use App\Cache\CacheService;
 use App\DTO\DialogDTO;
 use App\Http\Requests\CreateMessageRequest;
 use App\Http\Requests\GetDialogRequest;
+use App\Http\Resources\ChatsResource;
 use App\Http\Resources\DialogResource;
 use App\Http\Responses\CommonResponse;
 use App\Jobs\SendMessageByWebSocket;
@@ -36,6 +37,13 @@ class ChatController extends Controller
             function () use ($dialog) {
                 return new DialogResource($dialog);
             }
+        );
+    }
+
+    public function getChats(): ChatsResource
+    {
+        return new ChatsResource(
+            $this->chatService->getUserChats(auth()->user())
         );
     }
 }

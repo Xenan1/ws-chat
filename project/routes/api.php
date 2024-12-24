@@ -15,7 +15,7 @@ Route::group([
     Route::middleware('auth:api')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::post('refresh', [AuthController::class, 'refresh']);
-        Route::get('me', [AuthController::class, 'me']);
+        Route::get('me', [AuthController::class, 'me'])->name('me');
 
     });
 });
@@ -24,8 +24,9 @@ Route::group([
     'middleware' => 'auth:api',
 ], function () {
     Route::prefix('chat')->group(function () {
-        Route::post('messages', [ChatController::class, 'createMessage']);
-        Route::get('dialog', [ChatController::class, 'getDialog']);
+        Route::post('messages', [ChatController::class, 'createMessage'])->name('newMessage');
+        Route::get('dialog', [ChatController::class, 'getDialog'])->name('dialog');
+        Route::get('members', [ChatController::class, 'getChats'])->name('chats');
     });
 
     Route::prefix('feed')->group(function () {

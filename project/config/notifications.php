@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'service' => \App\Services\Notifications\LogNotificationService::class
+    'service' => \App\Services\Notifications\WebsocketNotificationService::class
 ];

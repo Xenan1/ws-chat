@@ -9,6 +9,13 @@ wss.on('connection', function connection(ws) {
     ws.on('message', function message(data) {
         const message = JSON.parse(data);
 
+        function sendMessage(recipient, message) {
+            if (clients.has(recipient)) {
+                const recipientWs = clients.get(recipient)
+                recipientWs.send(JSON.stringify(message))
+            }
+        }
+
         if (message.type === 'register') {
 
             clients.set(message.user_id, ws)
@@ -17,14 +24,18 @@ wss.on('connection', function connection(ws) {
 
             const { sender, recipient, text, date } = message
 
-            if (clients.has(recipient)) {
-                const recipientWs = clients.get(recipient)
-                recipientWs.send(JSON.stringify({
-                    sender: sender,
-                    text: text,
-                    date: date,
-                }))
+            const messageData = {
+                sender: sender,
+                text: text,
+                date: date,
             }
+
+            sendMessage(recipient, messageData);
+
+        } else if (message.type === 'notification') {
+            const {recipient, text} = message
+
+            sendMessage(recipient, {text: text})
         }
     });
 

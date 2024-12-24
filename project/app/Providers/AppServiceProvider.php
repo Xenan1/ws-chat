@@ -8,6 +8,7 @@ use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,6 +29,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SendPostNotification::class, function (Application $app) {
             return new SendPostNotification($app->make(UserService::class), $app->make(config('notifications.service')));
         });
+
+        JsonResource::withoutWrapping();
 
         $this->scrambleConfiguration();
     }

@@ -24,8 +24,8 @@ Route::group([
     'middleware' => 'auth:api',
 ], function () {
     Route::prefix('chat')->group(function () {
-        Route::post('messages', [ChatController::class, 'createMessage']);
-        Route::get('dialog', [ChatController::class, 'getDialog']);
+        Route::post('messages', [ChatController::class, 'createMessage'])->name('newMessage');
+        Route::get('dialog', [ChatController::class, 'getDialog'])->name('dialog');
         Route::get('members', [ChatController::class, 'getChats'])->name('chats');
     });
 

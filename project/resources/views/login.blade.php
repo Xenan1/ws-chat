@@ -27,8 +27,8 @@
             })
                 .then(response => {
                     if (response.status === 200) {
-                        localStorage.setItem('bearer', response.access_token)
-                        window.location.href = '{{ route('chat') }}'
+                        localStorage.setItem('bearer', response.data.access_token)
+                        window.location.href = '{{ route('web.chat') }}'
                     } else {
                         alert('Invalid credentials')
                     }

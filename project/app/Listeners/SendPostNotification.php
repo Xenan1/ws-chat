@@ -6,9 +6,12 @@ use App\Events\PostPublished;
 use App\Services\Notifications\AbstractNotificationService;
 use App\Services\UserService;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
 class SendPostNotification implements ShouldQueue
 {
+    use Queueable;
+
     /**
      * Create the event listener.
      */
@@ -26,5 +29,12 @@ class SendPostNotification implements ShouldQueue
         $users = $this->userService->getUserSubscribers($author);
         $message = "User {$author->getName()} published new post";
         $this->notificationService->notifyUsers($users, $message);
+    }
+
+    public function onQueue($queue)
+    {
+        $this->queue = 'notifications';
+
+        return $this;
     }
 }

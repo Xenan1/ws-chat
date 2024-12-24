@@ -27,4 +27,11 @@ class SendMessageByWebSocket implements ShouldQueue
     {
         broadcast(new MessageReceived($this->message->sender, $this->message->recipient, $this->message));
     }
+
+    public function onQueue($queue)
+    {
+        $this->queue = 'chat';
+
+        return $this;
+    }
 }

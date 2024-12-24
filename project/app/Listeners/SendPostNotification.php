@@ -12,8 +12,6 @@ class SendPostNotification implements ShouldQueue
 {
     use Queueable;
 
-    public $queue = 'notifications';
-
     /**
      * Create the event listener.
      */
@@ -31,5 +29,12 @@ class SendPostNotification implements ShouldQueue
         $users = $this->userService->getUserSubscribers($author);
         $message = "User {$author->getName()} published new post";
         $this->notificationService->notifyUsers($users, $message);
+    }
+
+    public function onQueue($queue)
+    {
+        $this->queue = 'notifications';
+
+        return $this;
     }
 }

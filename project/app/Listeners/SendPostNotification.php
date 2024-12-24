@@ -6,9 +6,14 @@ use App\Events\PostPublished;
 use App\Services\Notifications\AbstractNotificationService;
 use App\Services\UserService;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
 class SendPostNotification implements ShouldQueue
 {
+    use Queueable;
+
+    public $queue = 'notifications';
+
     /**
      * Create the event listener.
      */

@@ -11,6 +11,8 @@ class SendMessageByWebSocket implements ShouldQueue
 {
     use Queueable;
 
+    public $queue = 'chat';
+
     /**
      * Create a new job instance.
      */

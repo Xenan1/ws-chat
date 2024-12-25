@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string $text
  * @property User $author
  * @property string $created_at
- * @property bool $approved
  */
 class Post extends Model
 {
@@ -55,19 +54,5 @@ class Post extends Model
     public function getCreatedAt(): string
     {
         return $this->created_at;
-    }
-
-    public function getContent(string $key): mixed
-    {
-        return match ($key) {
-            'author' => $this->author->getName(),
-            default => $this->$key,
-        };
-    }
-
-    public function approve(): void
-    {
-        $this->approved = true;
-        $this->saveQuietly();
     }
 }

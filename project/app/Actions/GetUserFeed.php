@@ -21,7 +21,6 @@ class GetUserFeed
 
         return Post::query()
             ->with(['author', 'likes', 'tags'])
-            ->where('approved', '=', true)
             ->leftJoin('posts_tags', 'posts.id', '=', 'posts_tags.post_id')
             ->leftJoinSub($tagWeights, 'tag_weights', 'posts_tags.tag_id', '=', 'tag_weights.tag_id')
             ->leftJoin('posts_views', function (JoinClause $join) use ($userId) {

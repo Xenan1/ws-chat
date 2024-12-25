@@ -12,7 +12,6 @@
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
-        "orchid/platform": "^14.44",
         "pusher/pusher-php-server": "^7.2",
         "textalk/websocket": "^1.5",
         "tymon/jwt-auth": "^2.1"

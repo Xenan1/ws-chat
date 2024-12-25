@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Integrations\IpApi\DTO;
+namespace App\DTO;
 
-readonly class IpCoordsDTO
+readonly class CoordsDTO
 {
     public function __construct(
         public string $latitude,

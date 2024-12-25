@@ -2,7 +2,7 @@
 
 namespace App\Integrations\IpApi;
 
-use App\Integrations\IpApi\DTO\IpCoordsDTO;
+use App\DTO\CoordsDTO;
 use Illuminate\Http\Client\RequestException;
 
 class IpApiService
@@ -12,10 +12,10 @@ class IpApiService
     /**
      * @throws RequestException
      */
-    public function getIpCoords(string $ip): IpCoordsDTO
+    public function getIpCoords(string $ip): CoordsDTO
     {
-        $ipData = $this->client->getIpData($ip);
+        $ipData = $this->client->getIpData($ip, config('integrations.ip-api.fields_set'));
 
-        return new IpCoordsDTO($ipData['lat'], $ipData['lon']);
+        return new CoordsDTO($ipData['lat'], $ipData['lon']);
     }
 }

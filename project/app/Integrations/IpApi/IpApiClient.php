@@ -10,11 +10,14 @@ class IpApiClient
     /**
      * @throws RequestException
      */
-    public function getIpData(string $ip): array
+    public function getIpData(string $ip, string $fieldsSet): array
     {
-        $url = config('integrations.ip-api.url') . $ip . '?fields=' . config('integrations.ip-api.fields_set');
+        $url = config('integrations.ip-api.url') . $ip;
 
-        $response = Http::get($url);
+        $response = Http::get($url, [
+            'fields' => $fieldsSet
+        ]);
+
         $response->throw();
 
         $body = json_decode($response->body(), true);

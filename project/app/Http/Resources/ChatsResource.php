@@ -24,9 +24,7 @@ class ChatsResource extends BaseJsonResource
     public function toArray($request): array
     {
         return [
-            'chats' => $this->users->map(function (User $user) {
-                return new UserResource($user);
-            })
+            'chats' => UserResource::collection($this->users),
         ];
     }
 }

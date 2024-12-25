@@ -60,11 +60,17 @@ RUN echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/settings.ini
 # Копирование конфигурации Supervisor
 COPY deploy/supervisor/conf.d/* /etc/supervisor/conf.d/
 
+USER 1000:1000
+
 # Рабочий каталог для Laravel
-WORKDIR /var/www
+WORKDIR /var/www/html
 # Старт через Supervisor
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
+USER 0:0
 
 # Очистка после установки
 RUN apk del autoconf g++ make \
     && rm -rf /tmp/* /var/cache/apk/*
+
+USER 1000:1000

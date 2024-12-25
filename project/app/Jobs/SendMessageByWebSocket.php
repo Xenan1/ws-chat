@@ -11,6 +11,8 @@ class SendMessageByWebSocket implements ShouldQueue
 {
     use Queueable;
 
+    public $queue = 'chat';
+
     /**
      * Create a new job instance.
      */
@@ -24,5 +26,12 @@ class SendMessageByWebSocket implements ShouldQueue
     public function handle(): void
     {
         broadcast(new MessageReceived($this->message->sender, $this->message->recipient, $this->message));
+    }
+
+    public function onQueue($queue)
+    {
+        $this->queue = 'chat';
+
+        return $this;
     }
 }

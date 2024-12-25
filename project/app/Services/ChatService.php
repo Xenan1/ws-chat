@@ -4,18 +4,21 @@ namespace App\Services;
 
 use App\DTO\MessageDataDTO;
 use App\Events\MessageCreated;
+use App\Jobs\SendMessageByWebSocket;
 use App\Models\Message;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class ChatService
 {
+    public function __construct(protected MessageEncryptor $encryptor) {}
+
     public function createMessage(MessageDataDTO $data): Message
     {
         $message = Message::query()->create([
             'sender_id' => $data->senderId,
             'recipient_id' => $data->recipientId,
-            'text' => $data->message,
+            'text' => $this->encryptor->encrypt($data),
         ]);
 
         event(new MessageCreated($message));
@@ -38,5 +41,23 @@ class ChatService
                 $query->where('sender_id', '=', $chatPartnerId)
                     ->where('recipient_id', '=', $userId);
             })->orderBy('created_at')->with(['sender', 'recipient'])->get();
+    }
+
+    public function send(Message $message): void
+    {
+        $encryptedMessageText = $this->encryptor->decryptMessageText(
+            $message->getText(),
+            $message->getSender()->getId(),
+            $message->getRecipient()->getId()
+        );
+
+        dispatch(new SendMessageByWebSocket(
+            new MessageDataDTO(
+                $encryptedMessageText,
+                $message->getSender()->getId(),
+                $message->getRecipient()->getId(),
+                $message->getCreatedAt(),
+            )
+        ));
     }
 }

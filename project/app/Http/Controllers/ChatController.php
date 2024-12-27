@@ -29,7 +29,7 @@ class ChatController extends Controller
         $user = auth()->user();
         $chatPartner = User::query()->find($request->getChatPartnerId());
         $messages = $this->chatService->getDialogMessages($user->id, $chatPartner->id);
-        $dialog = new DialogDTO($user, $chatPartner, $messages, $chatPartner->avatar);
+        $dialog = new DialogDTO($user, $chatPartner, $messages, $chatPartner->getAvatar());
 
         return $cache->remember(
             CacheKeyStorage::dialog($user->id, $chatPartner->id),

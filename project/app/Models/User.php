@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use App\Interfaces\ImageableInterface;
+use App\Traits\HasImage;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -15,12 +16,12 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property string $name
  * @property string $login
  * @property string $password
- * @property ?Image $avatar
+ * @property ?Image $image
  */
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements JWTSubject, ImageableInterface
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasImage;
 
     /**
      * The attributes that are mass assignable.
@@ -62,11 +63,6 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function avatar(): MorphOne
-    {
-        return $this->morphOne(Image::class, 'imageable');
-    }
-
     public function likedPosts(): BelongsToMany
     {
         return $this->belongsToMany(Post::class, 'likes');
@@ -99,6 +95,6 @@ class User extends Authenticatable implements JWTSubject
 
     public function getAvatar(): ?Image
     {
-        return $this->avatar;
+        return $this->image;
     }
 }

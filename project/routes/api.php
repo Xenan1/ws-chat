@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\FeedController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
@@ -36,5 +37,9 @@ Route::group([
             Route::delete('/', [FeedController::class, 'unlikePost']);
         });
 
+    });
+
+    Route::prefix('profile')->group(function () {
+        Route::post('avatar', [ProfileController::class, 'uploadAvatar']);
     });
 });

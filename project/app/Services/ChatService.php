@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DTO\MessageDataDTO;
 use App\Events\MessageCreated;
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -38,5 +39,14 @@ class ChatService
                 $query->where('sender_id', '=', $chatPartnerId)
                     ->where('recipient_id', '=', $userId);
             })->orderBy('created_at')->with(['sender', 'recipient'])->get();
+    }
+
+    /**
+     * @param User $user
+     * @return Collection<User>
+     */
+    public function getUserChats(User $user): Collection
+    {
+        return User::query()->whereNot('id', '=', $user->getId())->get();
     }
 }

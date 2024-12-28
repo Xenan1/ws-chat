@@ -69,13 +69,22 @@
         return $('#chat-messages');
     }
 
-    function appendMessage(name, text, datetime, messagesBlock) {
+    function appendMessage(name, text, datetime, imageUrl, messagesBlock) {
+        let messageHtml = `<b>${name}</b><p style="margin: 3px">${text}</p><span style="font-size: 9px; opacity: 0.5">${datetime}</span>`;
+
+        if (imageUrl) {
+            messageHtml = messageHtml + `<img alt="" src="${imageUrl}">`
+        }
+
+        console.log(messageHtml)
+
         const messageItem = $('<div>', {
             class: 'message',
             style: 'display: flex; flex-direction: column; margin: 7px',
-            html: `<b>${name}</b><p style="margin: 3px">${text}</p><span style="font-size: 9px; opacity: 0.5">${datetime}</span>`
+            html: messageHtml
         });
-        messagesBlock.append(messageItem);
+
+        messagesBlock.append(messageItem)
     }
 
     async function fillDialog() {
@@ -105,7 +114,7 @@
             const messagesBlock = getMessagesBlock();
             messagesBlock.empty();
             messages.forEach(message => {
-                appendMessage(message.name, message.text, message.datetime, messagesBlock);
+                appendMessage(message.name, message.text, message.datetime, message.image, messagesBlock);
             });
         }
 
@@ -142,7 +151,8 @@
 
         socket.onmessage = (event) => {
             const message = JSON.parse(event.data);
-            appendMessage(message.sender, message.text, message.date, getMessagesBlock());
+            console.log(message)
+            appendMessage(message.sender, message.text, message.date, message.image, getMessagesBlock());
         };
 
         return socket;
@@ -168,7 +178,7 @@
 
             if (messageText) {
                 sendMessage(messageText, user);
-                appendMessage(user.name, messageText, getCurrentDate(), getMessagesBlock());
+                appendMessage(user.name, messageText, getCurrentDate(), '', getMessagesBlock());
             }
         });
     }

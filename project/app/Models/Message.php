@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property User $recipient
  * @property string $text
  * @property string $created_at
+ * @property ?Image $image
  */
 class Message extends Model implements ImageableInterface
 {
@@ -53,5 +54,15 @@ class Message extends Model implements ImageableInterface
     public function getCreatedAt(): string
     {
         return $this->created_at;
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getImage(): ?Image
+    {
+        return $this->image;
     }
 }

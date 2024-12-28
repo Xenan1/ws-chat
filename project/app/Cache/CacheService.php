@@ -5,6 +5,7 @@ namespace App\Cache;
 use App\Logging\CacheLogger;
 use App\Logging\Enum\LogLevels;
 use Closure;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 class CacheService
@@ -23,9 +24,9 @@ class CacheService
         $this->logger->log(LogLevels::Info, 'Data removed from cache', ['key' => $key->key]);
     }
 
-    public function remember(CacheKey $key, Closure $callback): mixed
+    public function remember(CacheKey $key, Closure $callback, int|Carbon|null $ttl = null): mixed
     {
-        $value = Cache::rememberForever($key->key, $callback);
+        $value = Cache::remember($key->key, $ttl, $callback);
         $this->logger->log(LogLevels::Info, 'Data remembered', ['key' => $key->key]);
 
         return $value;

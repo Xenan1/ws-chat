@@ -21,7 +21,7 @@ class ChatController extends Controller
     public function createMessage(CreateMessageRequest $request): CommonResponse
     {
         $message = $this->chatService->createMessage($request->getMessageData());
-        dispatch(new SendMessageByWebSocket($message));
+        $this->chatService->send($message);
         return new CommonResponse(true, 201);
     }
 

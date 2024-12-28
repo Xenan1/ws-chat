@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\DTO\MessageDataDTO;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
@@ -18,9 +19,7 @@ class MessageReceived implements ShouldBroadcast
      * Create a new event instance.
      */
     public function __construct(
-        protected User $sender,
-        protected User $recipient,
-        protected Message $message,
+        protected MessageDataDTO $message,
     ) {}
 
     /**
@@ -30,7 +29,7 @@ class MessageReceived implements ShouldBroadcast
      */
     public function broadcastOn(): Channel
     {
-        return new Channel('user.' . $this->recipient->id);
+        return new Channel('user.' . $this->message->recipientId);
     }
 
     public function broadcastAs(): string
@@ -41,10 +40,10 @@ class MessageReceived implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'sender' => $this->sender->getName(),
-            'recipient' => $this->recipient->id,
-            'text' => $this->message->text,
-            'date' => $this->message->created_at,
+            'sender' => $this->message->senderId,
+            'recipient' => $this->message->recipientId,
+            'text' => $this->message->message,
+            'date' => $this->message->createdAt,
             'type' => 'message',
         ];
     }

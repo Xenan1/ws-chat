@@ -18,7 +18,7 @@ RUN apk update && apk add --no-cache \
 
 # Установка PHP расширений через скрипт install-php-extensions
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
-RUN install-php-extensions pdo_mysql zip sockets intl imap pcntl
+RUN install-php-extensions pdo_mysql zip sockets intl imap pcntl openssl
 
 # Установка PHP Redis расширения через PECL
 RUN install-php-extensions redis

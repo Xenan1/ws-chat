@@ -8,5 +8,6 @@ readonly class MessageDataDTO
         public string $message,
         public int $senderId,
         public int $recipientId,
+        public ?string $createdAt = null,
     ) {}
 }

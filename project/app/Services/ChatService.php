@@ -6,6 +6,7 @@ use App\DTO\MessageDataDTO;
 use App\Events\MessageCreated;
 use App\Jobs\SendMessageByWebSocket;
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -43,6 +44,7 @@ class ChatService
             })->orderBy('created_at')->with(['sender', 'recipient'])->get();
     }
 
+
     public function send(Message $message): void
     {
         $senderId = $message->getSender()->getId();
@@ -62,5 +64,13 @@ class ChatService
                 $message->getCreatedAt(),
             )
         ));
+  
+    /**
+     * @param User $user
+     * @return Collection<User>
+     */
+    public function getUserChats(User $user): Collection
+    {
+        return User::query()->whereNot('id', '=', $user->getId())->get();
     }
 }

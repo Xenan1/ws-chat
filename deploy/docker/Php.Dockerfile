@@ -13,6 +13,7 @@ RUN apk update && apk add --no-cache \
     autoconf \
     g++ \
     make \
+    npm \
     && rm -rf /var/cache/apk/*
 
 # Установка PHP расширений через скрипт install-php-extensions
@@ -21,6 +22,7 @@ RUN install-php-extensions pdo_mysql zip sockets intl imap pcntl openssl
 
 # Установка PHP Redis расширения через PECL
 RUN install-php-extensions redis
+
 
 # Попытка установить Xdebug через PECL, в случае ошибки установим из исходников
 ENV PHP_IDE_CONFIG 'serverName=debug.php'
@@ -60,11 +62,17 @@ RUN echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/settings.ini
 # Копирование конфигурации Supervisor
 COPY deploy/supervisor/conf.d/* /etc/supervisor/conf.d/
 
+USER 1000:1000
+
 # Рабочий каталог для Laravel
-WORKDIR /var/www
+WORKDIR /var/www/html
 # Старт через Supervisor
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
+USER 0:0
 
 # Очистка после установки
 RUN apk del autoconf g++ make \
     && rm -rf /tmp/* /var/cache/apk/*
+
+USER 1000:1000

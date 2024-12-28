@@ -29,7 +29,7 @@ trait HasImage
         $src = $this->getImageSrc();
 
         return $src
-            ? config('app.domain') . '/storage/'. $src
+            ? config('app.domain') . '/storage'. $src
             : null;
     }
 }

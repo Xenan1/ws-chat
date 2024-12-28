@@ -20,10 +20,16 @@
                  style="position: fixed; bottom: 0; left: 0; width: 100%; padding: 10px; background-color: #fff; border-top: 2px solid #ccc; display: flex; z-index: 100; display: none;">
                 <input type="text" id="message-input" placeholder="Введите сообщение..."
                        style="flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                <input type="file" id="image-input" accept="image/*"
+                       style="margin-left: 10px; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">
                 <button id="send-button"
                         style="margin-left: 10px; padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 5px;">
                     Отправить
                 </button>
+                <div id="image-preview-container" style="display: none; padding: 10px; border-top: 1px solid #ccc; background-color: #f9f9f9;">
+                    <p style="margin: 0; font-size: 14px; color: #666;">Предпросмотр изображения:</p>
+                    <img id="image-preview" src="" alt="Предпросмотр" style="max-width: 100%; height: auto; margin-top: 10px; border-radius: 5px; display: none;">
+                </div>
             </div>
         </div>
     </div>
@@ -75,8 +81,6 @@
         if (imageUrl) {
             messageHtml = messageHtml + `<img alt="" src="${imageUrl}">`
         }
-
-        console.log(messageHtml)
 
         const messageItem = $('<div>', {
             class: 'message',
@@ -159,14 +163,20 @@
     }
 
     function messageHandling(user) {
-        async function sendMessage(text, sender) {
+        async function sendMessage(text, sender, image) {
             try {
                 await axios.post('{{ route('newMessage') }}', {
                     message: text,
                     recipient_id: getChatPartnerId(),
-                    sender_id: sender.id
+                    sender_id: sender.id,
+                    image: image
+                }, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    }
                 });
             } catch (error) {
+                console.log(error)
                 alert(error.data);
             }
         }
@@ -175,10 +185,12 @@
             const messageInput = $('#message-input');
             const messageText = messageInput.val();
             messageInput.val('');
+            const imageFromInput = getImageFromInput();
+            clearImageInput();
 
             if (messageText) {
-                sendMessage(messageText, user);
-                appendMessage(user.name, messageText, getCurrentDate(), '', getMessagesBlock());
+                sendMessage(messageText, user, imageFromInput);
+                appendMessage(user.name, messageText, getCurrentDate(), URL.createObjectURL(imageFromInput), getMessagesBlock());
             }
         });
     }
@@ -199,7 +211,50 @@
         return formatted.replace(',', '').replace(/\./g, '-').replace(' ', 'T').split('T').join(' ');
     }
 
+    function getImageFromInput() {
+        const file = $('#image-input')[0].files[0]
+
+        if (!file) {
+            alert('Пожалуйста, выберите изображение.')
+            return
+        }
+
+        return file
+    }
+
+    function clearImageInput() {
+        $('#image-input').val('')
+        $('#image-preview-container').hide()
+    }
+
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('bearer');
+
+    function imageUploadInput() {
+        const imageInput = $('#image-input');
+        const imagePreview = $('#image-preview');
+        const imagePreviewContainer = $('#image-preview-container');
+
+        imageInput.on('change', function () {
+            const file = this.files[0];
+
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    imagePreview.attr('src', e.target.result);
+                    imagePreview.show();
+                    imagePreviewContainer.show();
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.attr('src', '');
+                imagePreview.hide();
+                imagePreviewContainer.hide();
+                alert('Пожалуйста, выберите изображение.');
+            }
+        });
+    }
 
     $(document).ready(async () => {
         const user = await getUser();
@@ -213,8 +268,11 @@
             fillDialog();
         });
 
-        toggleChatInput();
         messageHandling(user);
+
+        imageUploadInput();
+        toggleChatInput();
+
     });
 </script>
 </body>

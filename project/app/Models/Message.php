@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property int $id
  * @property User $sender
- * @property User $recipient
+ * @property Chat $chat
  * @property string $text
  * @property string $created_at
  * @property ?Image $image
@@ -26,9 +26,9 @@ class Message extends Model implements ImageableInterface
         return $this->belongsTo(User::class, 'sender_id');
     }
 
-    public function recipient(): BelongsTo
+    public function chat(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'recipient_id');
+        return $this->belongsTo(Chat::class);
     }
 
     public function getSender(): User
@@ -41,9 +41,9 @@ class Message extends Model implements ImageableInterface
         return $this->getSender()->getName();
     }
 
-    public function getRecipient(): User
+    public function getChat(): Chat
     {
-        return $this->recipient;
+        return $this->chat;
     }
 
     public function getText(): string

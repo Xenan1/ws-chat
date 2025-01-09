@@ -27,7 +27,7 @@ class CreateMessageRequest extends FormRequest
     {
         return [
             'message' => ['required', 'string'],
-            'recipient_id' => ['required', Rule::exists('users', 'id')],
+            'chat_id' => ['required', Rule::exists('chats', 'id')],
             'sender_id' => ['required', Rule::exists('users', 'id')],
             'image' => ['sometimes', 'nullable', 'image'],
         ];
@@ -38,7 +38,7 @@ class CreateMessageRequest extends FormRequest
         return new MessageDataDTO(
             $this->input('message'),
             $this->input('sender_id'),
-            $this->input('recipient_id'),
+            $this->input('chat_id'),
         );
     }
 

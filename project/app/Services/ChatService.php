@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\DTO\MessageDataDTO;
+use App\DTO\MessageDTO;
 use App\Events\MessageCreated;
 use App\Jobs\SendMessageByWebSocket;
+use App\Models\Chat;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,7 +25,7 @@ class ChatService
     {
         $message = Message::query()->create([
             'sender_id' => $data->senderId,
-            'recipient_id' => $data->recipientId,
+            'recipient_id' => $data->chatId,
             'text' => $this->encryptor->encrypt($data),
         ]);
 
@@ -33,24 +35,18 @@ class ChatService
     }
 
     /**
-     * @param int $userId
-     * @param int $chatPartnerId
+     * @param int $chatId
      * @return Collection<MessageDataDTO>
      */
-    public function getDialogMessages(int $userId, int $chatPartnerId): Collection
+    public function getDialogMessages(int $chatId): Collection
     {
         return Message::query()
-            ->where(function (Builder $query) use ($userId, $chatPartnerId) {
-                $query->where('sender_id', '=', $userId)
-                    ->where('recipient_id', '=', $chatPartnerId);
-            })->orWhere(function (Builder $query) use ($userId, $chatPartnerId) {
-                $query->where('sender_id', '=', $chatPartnerId)
-                    ->where('recipient_id', '=', $userId);
-            })->orderBy('created_at')->with(['sender', 'recipient'])->get()->map(function (Message $message) {
+            ->where('chat_id', '=', $chatId)
+            ->orderBy('created_at')->with(['sender', 'chat'])->get()->map(function (Message $message) {
                 return new MessageDataDTO(
-                    $this->encryptor->decryptMessageText($message->getText(), $message->getSender()->getId(), $message->getRecipient()->getId()),
+                    $this->encryptor->decryptMessageText($message->getText(), $message->getChat()->getId()),
                     $message->getSender()->getId(),
-                    $message->getRecipient()->getId(),
+                    $message->getChat()->getId(),
                     $message->getSenderName(),
                     $message->getImageFullPath(),
                     $message->getCreatedAt(),
@@ -61,34 +57,32 @@ class ChatService
 
     public function send(Message $message): void
     {
-        $senderId = $message->getSender()->getId();
-        $recipientId = $message->getRecipient()->getId();
+        $sender = $message->getSender();
+        $chat = $message->getChat();
 
-        $encryptedMessageText = $this->encryptor->decryptMessageText(
+        $decryptedMessageText = $this->encryptor->decryptMessageText(
             $message->getText(),
-            $senderId,
-            $recipientId
+            $chat->getId(),
         );
 
         dispatch(new SendMessageByWebSocket(
-            new MessageDataDTO(
-                $encryptedMessageText,
-                $senderId,
-                $recipientId,
-                $message->getSenderName(),
-                $message->getImageFullPath(),
+            new MessageDTO(
+                $decryptedMessageText,
+                $sender,
+                $chat,
                 $message->getCreatedAt(),
+                $message->getImageFullPath(),
             )
         ));
     }
 
     /**
      * @param User $user
-     * @return Collection<User>
+     * @return Collection<Chat>
      */
     public function getUserChats(User $user): Collection
     {
-        return User::query()->whereNot('id', '=', $user->getId())->get();
+        return Chat::query()->whereRelation('members', 'id', $user->getId())->get();
     }
 
     public function setMessageAttachment(Message $message, UploadedFile $file): void

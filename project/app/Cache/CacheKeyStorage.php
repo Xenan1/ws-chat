@@ -4,12 +4,9 @@ namespace App\Cache;
 
 class CacheKeyStorage
 {
-    public static function dialog(int $userId, int $chatPartnerId): CacheKey
+    public static function chat(int $chatId): CacheKey
     {
-        $userIds = [$userId, $chatPartnerId];
-        sort($userIds);
-        $key = sprintf('dialog_user%d_user%d', $userIds[0], $userIds[1]);
-        return new CacheKey($key);
+        return new CacheKey(sprintf('chat_%d_messages', $chatId));
     }
 
     public static function ipWeather(string $ip): CacheKey

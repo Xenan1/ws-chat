@@ -64,7 +64,8 @@ class ChatService
                 $message->getCreatedAt(),
             )
         ));
-  
+    }
+
     /**
      * @param User $user
      * @return Collection<User>

@@ -10,7 +10,6 @@ use App\Http\Requests\GetDialogRequest;
 use App\Http\Resources\ChatsResource;
 use App\Http\Resources\DialogResource;
 use App\Http\Responses\CommonResponse;
-use App\Jobs\SendMessageByWebSocket;
 use App\Models\User;
 use App\Services\ChatService;
 

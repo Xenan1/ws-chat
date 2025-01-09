@@ -80,7 +80,6 @@ class ChatService
                 $message->getCreatedAt(),
             )
         ));
-
     }
 
     /**

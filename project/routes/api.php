@@ -5,6 +5,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SpecialController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
@@ -43,6 +44,11 @@ Route::group([
 
     Route::prefix('profile')->group(function () {
         Route::post('avatar', [ProfileController::class, 'uploadAvatar']);
+
+        Route::prefix('subscription')->group(function () {
+            Route::post('/', [SubscriptionController::class, 'subscribe']);
+            Route::delete('/', [SubscriptionController::class, 'unsubscribe']);
+        });
     });
 });
 

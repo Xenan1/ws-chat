@@ -19,16 +19,6 @@ class UserService
         $user->likedPosts()->detach($postId);
     }
 
-    /**
-     * @param User $user
-     * @return Collection<User>
-     */
-    public function getUserSubscribers(User $user): Collection
-    {
-        #TODO: change stub when subscriptions ready
-        return User::query()->inRandomOrder()->limit(2)->get();
-    }
-
     public function setAvatar(User $user, string $imagePath): void
     {
         $user->image?->delete();

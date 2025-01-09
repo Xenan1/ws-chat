@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
@@ -17,6 +18,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property string $login
  * @property string $password
  * @property ?Image $image
+ * @property Collection $subscribers
+ * @property Collection $subscriptions
  */
 class User extends Authenticatable implements JWTSubject, ImageableInterface
 {
@@ -97,4 +100,25 @@ class User extends Authenticatable implements JWTSubject, ImageableInterface
     {
         return $this->image;
     }
+
+    public function subscribers(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'subscriptions', 'author_id', 'subscriber_id');
+    }
+
+    public function subscriptions(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'subscriptions', 'subscriber_id', 'author_id');
+    }
+
+    public function getSubscribers(): Collection
+    {
+        return $this->subscribers;
+    }
+
+    public function getSubscriptions(): Collection
+    {
+        return $this->subscriptions;
+    }
+
 }

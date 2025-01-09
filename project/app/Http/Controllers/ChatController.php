@@ -20,7 +20,13 @@ class ChatController extends Controller
     public function createMessage(CreateMessageRequest $request): CommonResponse
     {
         $message = $this->chatService->createMessage($request->getMessageData());
+
+        if ($request->getImage()) {
+            $this->chatService->setMessageAttachment($message, $request->getImage());
+        }
+
         $this->chatService->send($message);
+
         return new CommonResponse(true, 201);
     }
 

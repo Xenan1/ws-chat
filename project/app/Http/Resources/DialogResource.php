@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\DTO\DialogDTO;
+use App\DTO\MessageDataDTO;
 use App\Models\Message;
 use Illuminate\Http\Request;
 
@@ -25,11 +26,12 @@ class DialogResource extends BaseJsonResource
         return [
             'avatar' => $this->dialog->avatar?->getSrc(),
             'name' => $this->dialog->chatPartner->name,
-            'messages' => $this->dialog->messages->map(function (Message $message) {
+            'messages' => $this->dialog->messages->map(function (MessageDataDTO $message) {
                 return [
-                    'name' => $message->getSenderName(),
-                    'text' => $message->getText(),
-                    'datetime' => $message->getCreatedAt(),
+                    'name' => $message->senderName,
+                    'text' => $message->message,
+                    'datetime' => $message->createdAt,
+                    'image' => $message->imagePath,
                 ];
             })
         ];

@@ -24,12 +24,13 @@ wss.on('connection', function connection(ws) {
 
         } else if (message.type === 'message') {
 
-            const { sender, recipient, text, date } = message
+            const { sender, recipient, text, date, image } = message
 
             const messageData = {
                 sender: sender,
                 text: text,
                 date: date,
+                image: image,
             }
 
             sendMessage(recipient, messageData);

@@ -29,6 +29,8 @@ Route::group([
         Route::post('messages', [ChatController::class, 'createMessage'])->name('newMessage');
         Route::get('dialog', [ChatController::class, 'getChatMessages'])->name('dialog');
         Route::get('members', [ChatController::class, 'getChats'])->name('chats');
+        Route::post('/', [ChatController::class, 'createChat'])->name('createChat');
+        Route::get('{id}', [ChatController::class, 'getChat'])->name('getChat');
     });
 
     Route::prefix('feed')->group(function () {

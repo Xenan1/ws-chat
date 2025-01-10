@@ -65,4 +65,9 @@ class Chat extends Model implements ImageableInterface
     {
         return $this->is_dialog;
     }
+
+    public function hasMember(int $userId): bool
+    {
+        return $this->members()->where('users.id', '=', $userId)->exists();
+    }
 }

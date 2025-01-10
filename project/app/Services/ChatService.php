@@ -38,7 +38,7 @@ class ChatService
      * @param int $chatId
      * @return Collection<MessageDataDTO>
      */
-    public function getDialogMessages(int $chatId): Collection
+    public function getChatMessages(int $chatId): Collection
     {
         return Message::query()
             ->where('chat_id', '=', $chatId)
@@ -117,5 +117,18 @@ class ChatService
         $partner = $chat->getMembersExcept($user->getId())->first();
 
         return $partner->getName();
+    }
+
+    public function createChat(string $name, array $membersIds): Chat
+    {
+        $chat = Chat::query()->create(['name' => $name]);
+        $chat->members()->sync($membersIds);
+
+        return $chat;
+    }
+
+    public function getChatById(int $id): Chat
+    {
+        return Chat::query()->where('id', '=', $id)->firstOrFail();
     }
 }

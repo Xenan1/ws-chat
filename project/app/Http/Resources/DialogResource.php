@@ -27,14 +27,7 @@ class DialogResource extends BaseJsonResource
             'id' => $this->dialog->chat->getName(),
             'avatar' => $this->dialog->chat->getImageFullPath(),
             'name' => $this->dialog->chat->getName(),
-            'messages' => $this->dialog->messages->map(function (MessageDataDTO $message) {
-                return [
-                    'name' => $message->senderName,
-                    'text' => $message->message,
-                    'datetime' => $message->createdAt,
-                    'image' => $message->imagePath,
-                ];
-            })
+            'messages' => MessageResource::collection($this->dialog->messages),
         ];
     }
 }

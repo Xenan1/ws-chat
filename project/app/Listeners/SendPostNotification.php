@@ -26,7 +26,7 @@ class SendPostNotification implements ShouldQueue
     public function handle(PostPublished $event): void
     {
         $author = $event->getPost()->getAuthor();
-        $users = $this->userService->getUserSubscribers($author);
+        $users = $author->getSubscribers();
         $message = "User {$author->getName()} published new post";
         $this->notificationService->notifyUsers($users, $message);
     }

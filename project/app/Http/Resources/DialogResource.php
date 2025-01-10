@@ -24,7 +24,7 @@ class DialogResource extends BaseJsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->dialog->chat->getName(),
+            'id' => $this->dialog->chat->getId(),
             'avatar' => $this->dialog->chat->getImageFullPath(),
             'name' => $this->dialog->chat->getName(),
             'messages' => MessageResource::collection($this->dialog->messages),

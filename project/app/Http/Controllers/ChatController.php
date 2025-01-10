@@ -10,7 +10,6 @@ use App\Http\Requests\GetDialogRequest;
 use App\Http\Resources\ChatsResource;
 use App\Http\Resources\DialogResource;
 use App\Http\Responses\CommonResponse;
-use App\Models\Chat;
 use App\Services\ChatService;
 
 class ChatController extends Controller
@@ -33,12 +32,12 @@ class ChatController extends Controller
     public function getChatMessages(GetDialogRequest $request, CacheService $cache): DialogResource
     {
         $user = auth()->user();
-        $chat = Chat::query()->find($request->getChatId());
-        $messages = $this->chatService->getDialogMessages($chat->id);
+        $chat = $this->chatService->getDialogWithUsers($user->getId(), $request->getChatPartnerId());
+        $messages = $this->chatService->getDialogMessages($chat->getId());
         $dialog = new ChatDTO($user, $chat, $messages);
 
         return $cache->remember(
-            CacheKeyStorage::chat($user->id, $chat->id),
+            CacheKeyStorage::chat($chat->getId()),
             function () use ($dialog) {
                 return new DialogResource($dialog);
             }

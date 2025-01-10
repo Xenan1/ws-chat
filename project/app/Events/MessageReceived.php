@@ -3,6 +3,8 @@
 namespace App\Events;
 
 use App\DTO\MessageDTO;
+use App\Logging\ChatLogger;
+use App\Logging\Enum\LogLevels;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -39,7 +41,7 @@ class MessageReceived implements ShouldBroadcast
     {
         return [
             'sender' => $this->message->sender->getName(),
-            'recipients' => $this->message->chat->getMembersExcept($this->message->sender->getId()),
+            'recipients' => $this->message->chat->getMembersExcept($this->message->sender->getId())->pluck('id')->toArray(),
             'text' => $this->message->text,
             'date' => $this->message->createdAt,
             'image' => $this->message->imagePath,

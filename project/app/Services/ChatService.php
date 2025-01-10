@@ -25,7 +25,7 @@ class ChatService
     {
         $message = Message::query()->create([
             'sender_id' => $data->senderId,
-            'recipient_id' => $data->chatId,
+            'chat_id' => $data->chatId,
             'text' => $this->encryptor->encrypt($data),
         ]);
 
@@ -82,12 +82,40 @@ class ChatService
      */
     public function getUserChats(User $user): Collection
     {
-        return Chat::query()->whereRelation('members', 'id', $user->getId())->get();
+        return Chat::query()->whereRelation('members', 'users.id', $user->getId())->get();
     }
 
     public function setMessageAttachment(Message $message, UploadedFile $file): void
     {
         $imagePath = $this->uploadService->uploadImage($file, "/messages/$message->id/attachment");
         $this->imageService->createFromPath($message, $imagePath);
+    }
+
+    public function getDialogWithUsers(int $userId, int $dialogPartnerId): Chat
+    {
+        return Chat::query()->whereRelation('members', 'users.id', $userId)
+            ->whereRelation('members', 'users.id', $dialogPartnerId)
+            ->where('is_dialog', '=', true)
+            ->firstOr(function () use ($userId, $dialogPartnerId) {
+                $chat = Chat::query()->create(['is_dialog' => true]);
+                $chat->members()->sync([$userId, $dialogPartnerId]);
+
+                return $chat;
+            });
+    }
+
+    public function getName(Chat $chat): string
+    {
+        return $chat->isDialog()
+            ? $this->getPartnerName($chat)
+            : $chat->name;
+    }
+
+    protected function getPartnerName(Chat $chat): string
+    {
+        $user = auth()->user();
+        $partner = $chat->getMembersExcept($user->getId())->first();
+
+        return $partner->getName();
     }
 }

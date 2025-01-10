@@ -24,12 +24,12 @@ class GetDialogRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'chat_id' => ['required', Rule::exists('chats', 'id')],
+            'chat_partner_id' => ['required', Rule::exists('users', 'id')],
         ];
     }
 
-    public function getChatId(): int
+    public function getChatPartnerId(): int
     {
-        return $this->input('chat_id');
+        return $this->input('chat_partner_id');
     }
 }

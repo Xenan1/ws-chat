@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\FeedController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SpecialController;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,7 @@ Route::group([
             Route::delete('/', [FeedController::class, 'unlikePost']);
         });
 
+        Route::post('posts', [PostController::class, 'createPost']);
     });
 
     Route::prefix('profile')->group(function () {

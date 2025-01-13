@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTO\PostDataDTO;
+use App\Events\PostPublished;
 use App\Http\Requests\CreatePostRequest;
 use App\Http\Responses\CommonResponse;
 use App\Services\PostService;
@@ -19,7 +20,9 @@ class PostController extends Controller
             $request->getTags(),
         );
 
-        $this->postService->createPost($postData);
+        $post = $this->postService->createPost($postData);
+
+        event(new PostPublished($post));
 
         return new CommonResponse(true, 201);
     }

@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\DTO\MessageDataDTO;
+use App\DTO\MessageDTO;
 use App\Events\MessageReceived;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -15,7 +16,7 @@ class SendMessageByWebSocket implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        protected MessageDataDTO $message,
+        protected MessageDTO $message,
     ) {}
 
     /**

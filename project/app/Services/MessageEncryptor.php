@@ -10,24 +10,21 @@ class MessageEncryptor
 
     public function encrypt(MessageDataDTO $message): string
     {
-        return $this->cryptoService->encrypt($message->message, $this->getDialogUniqueKey($message->senderId, $message->recipientId));
+        return $this->cryptoService->encrypt($message->message, $this->getDialogUniqueKey($message->chatId));
     }
 
     public function decrypt(MessageDataDTO $message): string
     {
-        return $this->cryptoService->decrypt($message->message, $this->getDialogUniqueKey($message->senderId, $message->recipientId));
+        return $this->cryptoService->decrypt($message->message, $this->getDialogUniqueKey($message->chatId));
     }
 
-    public function decryptMessageText(string $text, int $senderId, int $recipientId): string
+    public function decryptMessageText(string $text, int $chatId): string
     {
-        return $this->cryptoService->decrypt($text, $this->getDialogUniqueKey($senderId, $recipientId));
+        return $this->cryptoService->decrypt($text, $this->getDialogUniqueKey($chatId));
     }
 
-    protected function getDialogUniqueKey(int $userId, int $chatPartnerId): string
+    protected function getDialogUniqueKey(int $chatId): string
     {
-        $usersIds = [$userId, $chatPartnerId];
-        sort($usersIds);
-
-        return md5(implode('_', $usersIds));
+        return md5($chatId);
     }
 }

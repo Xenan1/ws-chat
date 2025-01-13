@@ -24,7 +24,7 @@ wss.on('connection', function connection(ws) {
 
         } else if (message.type === 'message') {
 
-            const { sender, recipient, text, date, image } = message
+            const { sender, recipients, text, date, image } = message
 
             const messageData = {
                 sender: sender,
@@ -33,7 +33,7 @@ wss.on('connection', function connection(ws) {
                 image: image,
             }
 
-            sendMessage(recipient, messageData);
+            recipients.forEach((recipient) => sendMessage(recipient, messageData))
 
         } else if (message.type === 'notification') {
             const {recipient, text} = message

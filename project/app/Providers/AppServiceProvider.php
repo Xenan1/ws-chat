@@ -3,12 +3,15 @@
 namespace App\Providers;
 
 use App\Listeners\SendPostNotification;
+use App\Models\Chat;
+use App\Policies\ChatPolicy;
 use App\Services\UserService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -33,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
         JsonResource::withoutWrapping();
 
         $this->scrambleConfiguration();
+        $this->registerPolicies();
     }
 
     protected function scrambleConfiguration(): void
@@ -42,5 +46,10 @@ class AppServiceProvider extends ServiceProvider
                 SecurityScheme::http('bearer')
             );
         });
+    }
+
+    protected function registerPolicies(): void
+    {
+        Gate::policy(Chat::class, ChatPolicy::class);
     }
 }

@@ -45,6 +45,7 @@ Route::group([
 
     Route::prefix('profile')->group(function () {
         Route::post('avatar', [ProfileController::class, 'uploadAvatar']);
+        Route::patch('device-token', [ProfileController::class, 'addDeviceToken']);
     });
 });
 

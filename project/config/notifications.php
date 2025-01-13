@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'service' => \App\Services\Notifications\WebsocketNotificationService::class
+    'service' => \App\Services\Notifications\FirebaseNotificationService::class
 ];

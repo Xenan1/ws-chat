@@ -14,6 +14,8 @@ RUN apk update && apk add --no-cache \
     g++ \
     make \
     npm \
+    openssl \
+    openssl-dev \
     && rm -rf /var/cache/apk/*
 
 # Установка PHP расширений через скрипт install-php-extensions
@@ -22,7 +24,6 @@ RUN install-php-extensions pdo_mysql zip sockets intl imap pcntl openssl
 
 # Установка PHP Redis расширения через PECL
 RUN install-php-extensions redis
-
 
 # Попытка установить Xdebug через PECL, в случае ошибки установим из исходников
 ENV PHP_IDE_CONFIG 'serverName=debug.php'

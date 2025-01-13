@@ -34,6 +34,18 @@ services:
     env_file:
       - .env
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "${RABBIT_PORT}:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: laravel_vhost
+    networks:
+      - pet-network
+
   mysql:
     image: mysql:9
     restart: unless-stopped

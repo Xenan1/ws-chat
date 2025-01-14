@@ -27,7 +27,7 @@ abstract class AbstractParser
         ], [
             'login' => 'parseUser',
             'name' => 'Обычный пользователь',
-            'password' => 'hardpassword',
+            'password' => bcrypt('hardpassword'),
         ]);
     }
 

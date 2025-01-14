@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Listeners\SendPostNotification;
+use App\Parsing\AbstractParser;
+use App\Parsing\HabrParser;
 use App\Services\UserService;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
@@ -13,6 +15,9 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+    public $bindings = [
+        AbstractParser::class => HabrParser::class,
+    ];
     /**
      * Register any application services.
      */

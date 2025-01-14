@@ -3,6 +3,8 @@
 namespace App\Orchid\Screens;
 
 use App\Models\Post;
+use App\Parsing\AbstractParser;
+use Illuminate\Http\Request;
 use Orchid\Screen\Action;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\ModalToggle;
@@ -42,7 +44,18 @@ class PostScreen extends Screen
      */
     public function commandBar(): iterable
     {
-        return [];
+        return [
+            Button::make('Parse random post')
+                ->method('parseRandomPost'),
+
+            Button::make('Create post')
+                ->modal('postModal'),
+
+            ModalToggle::make('Parse post by id')
+                ->modal('parsePostById')
+                ->icon('plus')
+                ->method('parsePostById'),
+        ];
     }
 
     /**
@@ -71,11 +84,33 @@ class PostScreen extends Screen
                             ->method('approve', ['post' => $post->id]);
                     }),
             ]),
+            Layout::modal('parsePostById', Layout::rows([
+                Input::make('orderId')
+                    ->title('ID поста')
+                    ->required(),
+                ]),
+            )->title('Парсинг поста')
+                ->applyButton('Создать')
+                ->closeButton('Отмена')
         ];
     }
 
     public function approve(Post $post): void
     {
         $post->approve();
+    }
+
+    public function parseRandomPost(): void
+    {
+        app(AbstractParser::class)->createPost();
+    }
+
+    public function parsePostById(Request $request): void
+    {
+        $postId = $request->input('orderId') ?? null;
+
+        if ($postId) {
+            app(AbstractParser::class)->createPostById($postId);
+        }
     }
 }

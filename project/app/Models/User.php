@@ -7,7 +7,7 @@ use App\Traits\HasImage;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Orchid\Platform\Models\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Orchid\Filters\Types\Like;
 use Orchid\Filters\Types\Where;
@@ -33,6 +33,7 @@ class User extends Authenticatable implements JWTSubject, ImageableInterface
      */
     protected $fillable = [
         'name',
+        'login',
         'email',
         'password',
     ];

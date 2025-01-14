@@ -14,14 +14,21 @@ RUN apk update && apk add --no-cache \
     g++ \
     make \
     npm \
+    openssl \
+    openssl-dev \
+    libssl3 \
     && rm -rf /var/cache/apk/*
 
 # Установка PHP расширений через скрипт install-php-extensions
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
-RUN install-php-extensions pdo_mysql zip sockets intl imap pcntl openssl
+RUN install-php-extensions pdo_mysql zip sockets intl imap pcntl
+
+RUN install-php-extensions openssl
 
 # Установка PHP Redis расширения через PECL
-RUN install-php-extensions redis
+RUN pear channel-update pecl.php.net && \
+    pecl install redis && \
+    echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini
 
 
 # Попытка установить Xdebug через PECL, в случае ошибки установим из исходников

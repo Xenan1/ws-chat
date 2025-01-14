@@ -7,9 +7,9 @@ use App\Cache\CacheService;
 use App\DTO\DialogDTO;
 use App\Http\Requests\CreateMessageRequest;
 use App\Http\Requests\GetDialogRequest;
+use App\Http\Resources\ChatsResource;
 use App\Http\Resources\DialogResource;
 use App\Http\Responses\CommonResponse;
-use App\Jobs\SendMessageByWebSocket;
 use App\Models\User;
 use App\Services\ChatService;
 
@@ -20,7 +20,13 @@ class ChatController extends Controller
     public function createMessage(CreateMessageRequest $request): CommonResponse
     {
         $message = $this->chatService->createMessage($request->getMessageData());
-        dispatch(new SendMessageByWebSocket($message));
+
+        if ($request->getImage()) {
+            $this->chatService->setMessageAttachment($message, $request->getImage());
+        }
+
+        $this->chatService->send($message);
+
         return new CommonResponse(true, 201);
     }
 
@@ -29,13 +35,20 @@ class ChatController extends Controller
         $user = auth()->user();
         $chatPartner = User::query()->find($request->getChatPartnerId());
         $messages = $this->chatService->getDialogMessages($user->id, $chatPartner->id);
-        $dialog = new DialogDTO($user, $chatPartner, $messages, $chatPartner->avatar);
+        $dialog = new DialogDTO($user, $chatPartner, $messages, $chatPartner->getAvatar());
 
         return $cache->remember(
             CacheKeyStorage::dialog($user->id, $chatPartner->id),
             function () use ($dialog) {
                 return new DialogResource($dialog);
             }
+        );
+    }
+
+    public function getChats(): ChatsResource
+    {
+        return new ChatsResource(
+            $this->chatService->getUserChats(auth()->user())
         );
     }
 }

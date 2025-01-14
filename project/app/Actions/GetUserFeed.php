@@ -20,8 +20,7 @@ class GetUserFeed
         $tagWeights = $this->getTagsWeightSubquery($userId);
 
         return Post::query()
-            ->with(['author', 'likes', 'tags'])
-            ->where('approved', '=', true)
+            ->with(['author', 'likes', 'tags', 'author.avatar'])
             ->leftJoin('posts_tags', 'posts.id', '=', 'posts_tags.post_id')
             ->leftJoinSub($tagWeights, 'tag_weights', 'posts_tags.tag_id', '=', 'tag_weights.tag_id')
             ->leftJoin('posts_views', function (JoinClause $join) use ($userId) {
@@ -37,10 +36,10 @@ class GetUserFeed
                 DB::raw('SUM(tag_weights.tag_weight) as total_weight'),
                 DB::raw('COUNT(posts_tags.tag_id) as has_tags')
             )
-            ->groupBy('posts.id', 'posts.text', 'posts.user_id', 'posts.created_at')
+            ->groupBy('posts.id')
             ->orderByDesc('has_tags')
             ->orderByDesc('total_weight')
-            ->orderByRaw('COUNT(posts_tags.tag_id) = 0 DESC')
+            ->limit(20)
             ->get();
     }
 

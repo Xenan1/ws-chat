@@ -18,16 +18,19 @@ wss.on('connection', function connection(ws) {
 
         if (message.type === 'register') {
 
-            clients.set(message.user_id, ws)
+            if (!clients.has(message.user_id)) {
+                clients.set(message.user_id, ws)
+            }
 
         } else if (message.type === 'message') {
 
-            const { sender, recipient, text, date } = message
+            const { sender, recipient, text, date, image } = message
 
             const messageData = {
                 sender: sender,
                 text: text,
                 date: date,
+                image: image,
             }
 
             sendMessage(recipient, messageData);

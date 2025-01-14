@@ -2,17 +2,23 @@
 
 namespace App\Models;
 
+use App\Interfaces\ImageableInterface;
+use App\Traits\HasImage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
+ * @property int $id
  * @property User $sender
  * @property User $recipient
  * @property string $text
  * @property string $created_at
+ * @property ?Image $image
  */
-class Message extends Model
+class Message extends Model implements ImageableInterface
 {
+    use HasImage;
+
     protected $guarded = [];
 
     public function sender(): BelongsTo
@@ -48,5 +54,15 @@ class Message extends Model
     public function getCreatedAt(): string
     {
         return $this->created_at;
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getImage(): ?Image
+    {
+        return $this->image;
     }
 }

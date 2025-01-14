@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
+use App\DTO\MessageDataDTO;
 use App\Events\MessageReceived;
-use App\Models\Message;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -15,7 +15,7 @@ class SendMessageByWebSocket implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        protected Message $message,
+        protected MessageDataDTO $message,
     ) {}
 
     /**
@@ -23,6 +23,13 @@ class SendMessageByWebSocket implements ShouldQueue
      */
     public function handle(): void
     {
-        broadcast(new MessageReceived($this->message->sender, $this->message->recipient, $this->message));
+        broadcast(new MessageReceived($this->message));
+    }
+
+    public function onQueue($queue): static
+    {
+        $this->queue = 'chat';
+
+        return $this;
     }
 }

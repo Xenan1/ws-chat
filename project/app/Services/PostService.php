@@ -12,6 +12,8 @@ class PostService
         $post = Post::query()->create([
             'text' => $postData->text,
             'user_id' => $postData->authorId,
+            'parsed_id' => $postData->parsedId,
+            'parsed_source' => $postData->parsedSource->value,
         ]);
 
         $post->tags()->attach($postData->tags);

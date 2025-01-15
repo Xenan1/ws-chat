@@ -4,10 +4,9 @@ namespace App\Orchid\Screens;
 
 use App\Models\Post;
 use App\Parsing\AbstractParser;
-use Illuminate\Http\Request;
+use App\Services\ConfigService;
 use Orchid\Screen\Action;
 use Orchid\Screen\Actions\Button;
-use Orchid\Screen\Actions\ModalToggle;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
@@ -45,16 +44,13 @@ class PostScreen extends Screen
     public function commandBar(): iterable
     {
         return [
+            $this->getParseButton(),
+
             Button::make('Parse random post')
                 ->method('parseRandomPost'),
 
             Button::make('Create post')
                 ->modal('postModal'),
-
-            ModalToggle::make('Parse post by id')
-                ->modal('parsePostById')
-                ->icon('plus')
-                ->method('parsePostById'),
         ];
     }
 
@@ -84,14 +80,6 @@ class PostScreen extends Screen
                             ->method('approve', ['post' => $post->id]);
                     }),
             ]),
-            Layout::modal('parsePostById', Layout::rows([
-                Input::make('orderId')
-                    ->title('ID поста')
-                    ->required(),
-                ]),
-            )->title('Парсинг поста')
-                ->applyButton('Создать')
-                ->closeButton('Отмена')
         ];
     }
 
@@ -100,17 +88,39 @@ class PostScreen extends Screen
         $post->approve();
     }
 
+    public function getParseButton(): Button
+    {
+        $config = app(ConfigService::class);
+
+        return $config->isParsingEnabled()
+            ? $this->getDisableParsingButton()
+            : $this->getEnableParsingButton();
+    }
+
+    protected function getDisableParsingButton(): Button
+    {
+        return Button::make('Disable parsing')
+            ->action(route('platform.post', ['method' => 'disableParsing']));
+    }
+
     public function parseRandomPost(): void
     {
         app(AbstractParser::class)->createPost();
     }
 
-    public function parsePostById(Request $request): void
+    protected function getEnableParsingButton(): Button
     {
-        $postId = $request->input('orderId') ?? null;
+        return Button::make('Enable parsing')
+            ->action(route('platform.post', ['method' => 'enableParsing']));
+    }
 
-        if ($postId) {
-            app(AbstractParser::class)->createPostById($postId);
-        }
+    protected function disableParsing(): void
+    {
+        app(ConfigService::class)->disableParsing();
+    }
+
+    protected function enableParsing(): void
+    {
+        app(ConfigService::class)->enableParsing();
     }
 }

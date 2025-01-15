@@ -102,6 +102,8 @@ Route::screen('/examples/grid', ExampleGridScreen::class)->name('platform.exampl
 Route::screen('/examples/charts', ExampleChartsScreen::class)->name('platform.example.charts');
 Route::screen('/examples/cards', ExampleCardsScreen::class)->name('platform.example.cards');
 
+Route::post('post/enableParsing', [PostScreen::class, 'enableParsing'])->name('platform.post.enable-parsing');
+Route::post('post/disableParsing', [PostScreen::class, 'disableParsing'])->name('platform.post.disable-parsing');
 Route::screen('post', PostScreen::class)->name('platform.post');
 
 //Route::screen('idea', Idea::class, 'platform.screens.idea');

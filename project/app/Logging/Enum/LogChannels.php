@@ -8,4 +8,5 @@ enum LogChannels: string
     case Chat = 'chat';
     case Notifications = 'notifications';
     case Cache = 'cache';
+    case Parsing = 'parsing';
 }

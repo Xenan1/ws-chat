@@ -55,11 +55,7 @@ RUN set -eux; \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Настройки cron и прав доступа
-RUN touch /var/log/cron.log \
-    && chmod 0644 /var/log/cron.log \
-    && printf '* * * * * www-data cd /var/www/html && php artisan schedule:run >> /dev/null 2>&1\n#' >> /etc/cron.d/laravel-cron \
-    && crontab /etc/cron.d/laravel-cron \
-    && mkdir -p /var/log/supervisor /var/log/php-fpm /var/log/xdebug \
+RUN mkdir -p /var/log/supervisor /var/log/php-fpm /var/log/xdebug \
     && touch /var/log/xdebug.log \
     && chmod 0755 /var/log/xdebug.log
 

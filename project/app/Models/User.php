@@ -8,11 +8,13 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Orchid\Platform\Models\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use Orchid\Filters\Types\Like;
 use Orchid\Filters\Types\Where;
 use Orchid\Filters\Types\WhereDateStartEnd;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Collection;
 
 /**
  * @property int $id
@@ -20,6 +22,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property string $login
  * @property string $password
  * @property ?Image $image
+ * @property Collection<DeviceToken> $deviceTokens
  */
 class User extends Authenticatable implements JWTSubject, ImageableInterface
 {
@@ -128,5 +131,18 @@ class User extends Authenticatable implements JWTSubject, ImageableInterface
     public function getAvatar(): ?Image
     {
         return $this->image;
+    }
+
+    public function deviceTokens(): HasMany
+    {
+        return $this->hasMany(DeviceToken::class);
+    }
+
+    /**
+     * @return Collection<DeviceToken>
+     */
+    public function getDeviceTokens(): Collection
+    {
+        return $this->deviceTokens;
     }
 }

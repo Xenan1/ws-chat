@@ -31,7 +31,7 @@ class SendPostNotification implements ShouldQueue
         $this->notificationService->notifyUsers($users, $message);
     }
 
-    public function onQueue($queue)
+    public function onQueue($queue): static
     {
         $this->queue = 'notifications';
 

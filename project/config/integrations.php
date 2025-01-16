@@ -15,4 +15,9 @@ return [
         'api-key' => env('OPENWEATHER_API_KEY'),
         'url' => 'https://api.openweathermap.org/data/3.0/onecall',
     ],
+
+    'google-client' => [
+        'account-file' => env('GOOGLE_SERVICE_ACCOUNT_FILEPATH'),
+        'app-id' => env('GOOGLE_APP_ID'),
+    ],
 ];

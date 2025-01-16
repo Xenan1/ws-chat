@@ -22,7 +22,8 @@ class PostController extends Controller
 
         $post = $this->postService->createPost($postData);
 
-        PostPublished::dispatch($post);
+        event(new PostPublished($post));
+
         return new CommonResponse(true, 201);
     }
 }

@@ -3,18 +3,24 @@
 namespace App\Parsing;
 
 use App\Logging\Enum\LogLevels;
+use App\Logging\ParsingLogger;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Parsing\Exceptions\ParseSourceUnavailableException;
 use App\Parsing\Exceptions\WrongParseEntityException;
+use App\Proxy\RotationProxy;
+use App\Services\PostService;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Http;
 
 final class HabrParser extends AbstractParser
 {
     private static string $articleListMethod = 'https://habr.com/kek/v2/articles/?sort=rating&page=';
     private static string $postMethod = 'https://habr.com/kek/v2/articles/%s/?fl=ru&hl=ru';
+    public function __construct(PostService $postService, ParsingLogger $logger, private RotationProxy $client)
+    {
+        parent::__construct($postService, $logger);
+    }
 
     /**
      * @throws ParseSourceUnavailableException|WrongParseEntityException
@@ -62,7 +68,7 @@ final class HabrParser extends AbstractParser
      */
     private function getArticleList(int $page): Response
     {
-        $posts = Http::get(self::$articleListMethod . $page);
+        $posts = $this->client->get(self::$articleListMethod . $page);
 
         if (!$this->isValidPostListResponse($posts)) {
             $this->throwServiceUnavailable();
@@ -101,7 +107,7 @@ final class HabrParser extends AbstractParser
     private function getPostById(int $postId): array
     {
         $postUrl = sprintf(self::$postMethod, $postId);
-        $post =  Http::get($postUrl);
+        $post =  $this->client->get($postUrl);
 
         return $this->handlePostResponse($post, $postId);
     }

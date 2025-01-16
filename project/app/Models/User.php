@@ -22,6 +22,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property string $login
  * @property string $password
  * @property ?Image $image
+ * @property Collection<Chat> $chats
  * @property Collection $subscribers
  * @property Collection $subscriptions
  * @property Collection<DeviceToken> $deviceTokens
@@ -168,4 +169,14 @@ class User extends Authenticatable implements JWTSubject, ImageableInterface
         return $this->subscriptions;
     }
 
+
+    public function chats(): BelongsToMany
+    {
+        return $this->belongsToMany(Chat::class, 'chats_users');
+    }
+
+    public function getChats(): Collection
+    {
+        return $this->chats;
+    }
 }

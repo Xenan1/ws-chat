@@ -2,16 +2,16 @@
 
 namespace App\Http\Resources;
 
-use App\DTO\DialogDTO;
+use App\DTO\ChatDTO;
 use App\DTO\MessageDataDTO;
 use App\Models\Message;
 use Illuminate\Http\Request;
 
 class DialogResource extends BaseJsonResource
 {
-    protected DialogDTO $dialog;
+    protected ChatDTO $dialog;
 
-    public function __construct(DialogDTO $resource)
+    public function __construct(ChatDTO $resource)
     {
         $this->dialog = $resource;
         parent::__construct($resource);
@@ -24,16 +24,10 @@ class DialogResource extends BaseJsonResource
     public function toArray(Request $request): array
     {
         return [
-            'avatar' => $this->dialog->avatar?->getSrc(),
-            'name' => $this->dialog->chatPartner->name,
-            'messages' => $this->dialog->messages->map(function (MessageDataDTO $message) {
-                return [
-                    'name' => $message->senderName,
-                    'text' => $message->message,
-                    'datetime' => $message->createdAt,
-                    'image' => $message->imagePath,
-                ];
-            })
+            'id' => $this->dialog->chat->getId(),
+            'avatar' => $this->dialog->chat->getImageFullPath(),
+            'name' => $this->dialog->chat->getName(),
+            'messages' => MessageResource::collection($this->dialog->messages),
         ];
     }
 }

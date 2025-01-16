@@ -2,29 +2,29 @@
 
 namespace App\Http\Resources;
 
-use App\Models\User;
+use App\Models\Chat;
 use Illuminate\Support\Collection;
 
 class ChatsResource extends BaseJsonResource
 {
     /**
-     * @var Collection<User>
+     * @var Collection<Chat>
      */
-    protected Collection $users;
+    protected Collection $chats;
 
     /**
-     * @param Collection<User> $resource
+     * @param Collection<Chat> $resource
      */
     public function __construct(Collection $resource)
     {
-        $this->users = $resource;
+        $this->chats = $resource;
         parent::__construct($resource);
     }
 
     public function toArray($request): array
     {
         return [
-            'chats' => UserResource::collection($this->users),
+            'chats' => ChatPreviewResource::collection($this->chats),
         ];
     }
 }

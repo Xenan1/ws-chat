@@ -12,9 +12,8 @@ class ForgetDialogCache
 
     public function handle(MessageCreated $event): void
     {
-        $this->cache->forget(CacheKeyStorage::dialog(
-            $event->getMessage()->getRecipient()->getId(),
-            $event->getMessage()->getSender()->getId()
+        $this->cache->forget(CacheKeyStorage::chat(
+            $event->getMessage()->getChat()->getId(),
         ));
     }
 }

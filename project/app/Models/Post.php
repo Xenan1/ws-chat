@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Parsing\ParseSources;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property User $author
  * @property string $created_at
  * @property bool $approved
+ * @property ?string $parsed_id
+ * @property ?string $parsed_source
  */
 class Post extends Model
 {
@@ -72,5 +75,20 @@ class Post extends Model
     {
         $this->approved = true;
         $this->saveQuietly();
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->approved;
+    }
+
+    public function getParsedId(): ?string
+    {
+        return $this->parsed_id;
+    }
+
+    public function getParsedSource(): ?ParseSources
+    {
+        return ParseSources::tryFrom($this->parsed_source);
     }
 }

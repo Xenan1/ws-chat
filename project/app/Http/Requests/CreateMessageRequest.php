@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\DTO\MessageDataDTO;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
 
 class CreateMessageRequest extends FormRequest
@@ -28,6 +29,7 @@ class CreateMessageRequest extends FormRequest
             'message' => ['required', 'string'],
             'recipient_id' => ['required', Rule::exists('users', 'id')],
             'sender_id' => ['required', Rule::exists('users', 'id')],
+            'image' => ['sometimes', 'nullable', 'image'],
         ];
     }
 
@@ -38,5 +40,10 @@ class CreateMessageRequest extends FormRequest
             $this->input('sender_id'),
             $this->input('recipient_id'),
         );
+    }
+
+    public function getImage(): ?UploadedFile
+    {
+        return $this->file('image');
     }
 }

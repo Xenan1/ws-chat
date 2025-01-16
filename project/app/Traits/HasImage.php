@@ -16,4 +16,20 @@ trait HasImage
     {
         return $this->id;
     }
+
+    public function getImageSrc(): ?string
+    {
+        return $this->image
+            ? $this->image->getSrc()
+            : null;
+    }
+
+    public function getImageFullPath(): ?string
+    {
+        $src = $this->getImageSrc();
+
+        return $src
+            ? config('app.domain') . '/storage'. $src
+            : null;
+    }
 }

@@ -3,8 +3,6 @@
 namespace App\Events;
 
 use App\DTO\MessageDataDTO;
-use App\Models\Message;
-use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -40,10 +38,11 @@ class MessageReceived implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'sender' => $this->message->senderId,
+            'sender' => $this->message->senderName,
             'recipient' => $this->message->recipientId,
             'text' => $this->message->message,
             'date' => $this->message->createdAt,
+            'image' => $this->message->imagePath,
             'type' => 'message',
         ];
     }

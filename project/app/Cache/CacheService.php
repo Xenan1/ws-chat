@@ -12,9 +12,9 @@ class CacheService
 {
     public function __construct(protected CacheLogger $logger) {}
 
-    public function put(CacheKey $key, mixed $value): void
+    public function put(CacheKey $key, mixed $value, int|Carbon|null $ttl = null): void
     {
-        Cache::put($key->key, $value);
+        Cache::put($key->key, $value, $ttl);
         $this->logger->log(LogLevels::Info, 'Data cached', ['key' => $key->key]);
     }
 
@@ -30,5 +30,10 @@ class CacheService
         $this->logger->log(LogLevels::Info, 'Data remembered', ['key' => $key->key]);
 
         return $value;
+    }
+
+    public function has(CacheKey $key): bool
+    {
+        return Cache::has($key->key);
     }
 }

@@ -14,14 +14,21 @@ RUN apk update && apk add --no-cache \
     g++ \
     make \
     npm \
+    openssl \
+    openssl-dev \
+    libssl3 \
     && rm -rf /var/cache/apk/*
 
 # Установка PHP расширений через скрипт install-php-extensions
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
-RUN install-php-extensions pdo_mysql zip sockets intl imap pcntl openssl
+RUN install-php-extensions pdo_mysql zip sockets intl imap pcntl
+
+RUN install-php-extensions openssl
 
 # Установка PHP Redis расширения через PECL
-RUN install-php-extensions redis
+RUN pear channel-update pecl.php.net && \
+    pecl install redis && \
+    echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini
 
 
 # Попытка установить Xdebug через PECL, в случае ошибки установим из исходников
@@ -48,11 +55,7 @@ RUN set -eux; \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Настройки cron и прав доступа
-RUN touch /var/log/cron.log \
-    && chmod 0644 /var/log/cron.log \
-    && printf '* * * * * www-data cd /var/www/html && php artisan schedule:run >> /dev/null 2>&1\n#' >> /etc/cron.d/laravel-cron \
-    && crontab /etc/cron.d/laravel-cron \
-    && mkdir -p /var/log/supervisor /var/log/php-fpm /var/log/xdebug \
+RUN mkdir -p /var/log/supervisor /var/log/php-fpm /var/log/xdebug \
     && touch /var/log/xdebug.log \
     && chmod 0755 /var/log/xdebug.log
 

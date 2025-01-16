@@ -7,8 +7,12 @@ use App\Traits\HasImage;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Orchid\Platform\Models\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
+use Orchid\Filters\Types\Like;
+use Orchid\Filters\Types\Where;
+use Orchid\Filters\Types\WhereDateStartEnd;
 use Illuminate\Support\Collection;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -19,6 +23,9 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property string $password
  * @property ?Image $image
  * @property Collection<Chat> $chats
+ * @property Collection $subscribers
+ * @property Collection $subscriptions
+ * @property Collection<DeviceToken> $deviceTokens
  */
 class User extends Authenticatable implements JWTSubject, ImageableInterface
 {
@@ -28,32 +35,61 @@ class User extends Authenticatable implements JWTSubject, ImageableInterface
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array
      */
-    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'login',
+        'email',
+        'password',
+    ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * The attributes excluded from the model's JSON form.
      *
-     * @var list<string>
+     * @var array
      */
     protected $hidden = [
         'password',
         'remember_token',
+        'permissions',
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast to native types.
      *
-     * @return array<string, string>
+     * @var array
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'permissions'          => 'array',
+        'email_verified_at'    => 'datetime',
+    ];
+
+    /**
+     * The attributes for which you can use filters in url.
+     *
+     * @var array
+     */
+    protected $allowedFilters = [
+           'id'         => Where::class,
+           'name'       => Like::class,
+           'email'      => Like::class,
+           'updated_at' => WhereDateStartEnd::class,
+           'created_at' => WhereDateStartEnd::class,
+    ];
+
+    /**
+     * The attributes for which can use sort in url.
+     *
+     * @var array
+     */
+    protected $allowedSorts = [
+        'id',
+        'name',
+        'email',
+        'updated_at',
+        'created_at',
+    ];
 
     public function getJWTIdentifier(): mixed
     {
@@ -99,6 +135,40 @@ class User extends Authenticatable implements JWTSubject, ImageableInterface
     {
         return $this->image;
     }
+
+    public function deviceTokens(): HasMany
+    {
+        return $this->hasMany(DeviceToken::class);
+    }
+
+    /**
+     * @return Collection<DeviceToken>
+     */
+    public function getDeviceTokens(): Collection
+    {
+        return $this->deviceTokens;
+    }
+
+    public function subscribers(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'subscriptions', 'author_id', 'subscriber_id');
+    }
+
+    public function subscriptions(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'subscriptions', 'subscriber_id', 'author_id');
+    }
+
+    public function getSubscribers(): Collection
+    {
+        return $this->subscribers;
+    }
+
+    public function getSubscriptions(): Collection
+    {
+        return $this->subscriptions;
+    }
+
 
     public function chats(): BelongsToMany
     {

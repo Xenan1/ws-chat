@@ -1,0 +1,5 @@
+2024-12-25 06:59:29,437 INFO supervisord started with pid 1
+2024-12-25 06:59:30,441 INFO spawned: 'laravel-queue' with pid 7
+2024-12-25 06:59:30,444 INFO spawned: 'php-fpm' with pid 8
+2024-12-25 06:59:31,535 INFO success: laravel-queue entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-25 06:59:31,535 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)

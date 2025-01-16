@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FeedController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SpecialController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
@@ -36,15 +39,30 @@ Route::group([
     Route::prefix('feed')->group(function () {
         Route::get('/', [FeedController::class, 'getFeed']);
 
+        Route::get('users', [FeedController::class, 'getUserRecommendation']);
+
         Route::prefix('like')->group(function () {
             Route::post('/', [FeedController::class, 'likePost']);
             Route::delete('/', [FeedController::class, 'unlikePost']);
         });
 
+        Route::prefix('posts')->group(function () {
+            Route::post('/', [PostController::class, 'createPost']);
+            Route::prefix('{id}')->group(function () {
+                Route::post('comments', [CommentController::class, 'create']);
+            });
+
+        });
     });
 
     Route::prefix('profile')->group(function () {
         Route::post('avatar', [ProfileController::class, 'uploadAvatar']);
+        Route::patch('device-token', [ProfileController::class, 'addDeviceToken']);
+
+        Route::prefix('subscription')->group(function () {
+            Route::post('/', [SubscriptionController::class, 'subscribe']);
+            Route::delete('/', [SubscriptionController::class, 'unsubscribe']);
+        });
     });
 });
 

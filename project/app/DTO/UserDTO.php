@@ -18,12 +18,12 @@ readonly class UserDTO
         return new self($data['login'], $data['name'], $data['password']);
     }
 
-    public function toArray(): array
+    public function toCreatableArray(): array
     {
         return [
             'login'=> $this->login,
             'name'=> $this->name,
-            'password'=> $this->password,
+            'password'=> bcrypt($this->password),
         ];
     }
 

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
@@ -35,12 +36,20 @@ Route::group([
     Route::prefix('feed')->group(function () {
         Route::get('/', [FeedController::class, 'getFeed']);
 
+        Route::get('users', [FeedController::class, 'getUserRecommendation']);
+
         Route::prefix('like')->group(function () {
             Route::post('/', [FeedController::class, 'likePost']);
             Route::delete('/', [FeedController::class, 'unlikePost']);
         });
 
-        Route::post('posts', [PostController::class, 'createPost']);
+        Route::prefix('posts')->group(function () {
+            Route::post('/', [PostController::class, 'createPost']);
+            Route::prefix('{id}')->group(function () {
+                Route::post('comments', [CommentController::class, 'create']);
+            });
+
+        });
     });
 
     Route::prefix('profile')->group(function () {

@@ -13,7 +13,7 @@ class RegisterService
 
     public function registerUser(UserDTO $user): void
     {
-        $user = User::query()->create($user->toArray());
+        $user = User::query()->create($user->toCreatableArray());
 
         $this->logger->log(LogLevels::Info, 'User created', [
             'user_id' => $user->id,

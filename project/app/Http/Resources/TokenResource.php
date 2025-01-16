@@ -20,9 +20,9 @@ class TokenResource extends BaseJsonResource
     public function toArray(Request $request): array
     {
         return [
-            'access_token' => $this->accessToken,
-            'token_type' => $this->type,
-            'expires_in' => $this->expireTime
+            'access_token' => $this->resource->accessToken,
+            'token_type' => $this->resource->type,
+            'expires_in' => $this->resource->expireTime
         ];
     }
 }

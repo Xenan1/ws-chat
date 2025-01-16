@@ -16,4 +16,9 @@ class CacheKeyStorage
     {
         return new CacheKey($ip . '_weather');
     }
+
+    public static function proxy(string $proxyUrl): CacheKey
+    {
+        return new CacheKey('error_proxy_' . $proxyUrl);
+    }
 }

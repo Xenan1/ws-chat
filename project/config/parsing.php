@@ -2,5 +2,5 @@
 
 return [
     # Period between parsing posts in minutes
-    'period' => 1,
+    'period' => 10,
 ];

@@ -162,6 +162,13 @@ return [
                 sprintf('logs/%s/parsing.log', LogChannels::Parsing->value)
             ),
         ],
+
+        LogChannels::Proxy->value => [
+            'driver' => 'single',
+            'path' => storage_path(
+                sprintf('logs/%s/proxy.log', LogChannels::Proxy->value)
+            ),
+        ],
     ],
 
 ];

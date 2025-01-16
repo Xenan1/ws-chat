@@ -49,7 +49,7 @@ class Chat extends Model implements ImageableInterface
 
     /**
      * @param int $userId
-     * @return Collection<User>
+     * @return Collection<int, User>
      */
     public function getMembersExcept(int $userId): Collection
     {

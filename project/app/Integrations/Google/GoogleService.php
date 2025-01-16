@@ -28,7 +28,7 @@ class GoogleService
 
         $service = new Google_Service_FirebaseCloudMessaging($this->client);
 
-        $user->getDeviceTokens()->map(function (DeviceToken $token) use ($title, $message, $user, $service) {
+        $user->getDeviceTokens()->map(function (DeviceToken $token) use ($title, $message, $service) {
             $this->sendMessageToDevice($token, $title, $message, $service);
         });
 

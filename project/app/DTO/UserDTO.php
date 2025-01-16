@@ -15,7 +15,7 @@ readonly class UserDTO
     public static function fromRequest(RegisterUserRequest $request): static
     {
         $data = $request->validated();
-        return new self($data['login'], $data['name'], $data['password']);
+        return new static($data['login'], $data['name'], $data['password']);
     }
 
     public function toCreatableArray(): array

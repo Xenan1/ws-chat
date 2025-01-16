@@ -13,8 +13,8 @@ use Illuminate\Notifications\Notifiable;
 use Orchid\Filters\Types\Like;
 use Orchid\Filters\Types\Where;
 use Orchid\Filters\Types\WhereDateStartEnd;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Support\Collection;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * @property int $id
@@ -22,6 +22,8 @@ use Illuminate\Support\Collection;
  * @property string $login
  * @property string $password
  * @property ?Image $image
+ * @property Collection $subscribers
+ * @property Collection $subscriptions
  * @property Collection<DeviceToken> $deviceTokens
  */
 class User extends Authenticatable implements JWTSubject, ImageableInterface
@@ -145,4 +147,25 @@ class User extends Authenticatable implements JWTSubject, ImageableInterface
     {
         return $this->deviceTokens;
     }
+
+    public function subscribers(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'subscriptions', 'author_id', 'subscriber_id');
+    }
+
+    public function subscriptions(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'subscriptions', 'subscriber_id', 'author_id');
+    }
+
+    public function getSubscribers(): Collection
+    {
+        return $this->subscribers;
+    }
+
+    public function getSubscriptions(): Collection
+    {
+        return $this->subscriptions;
+    }
+
 }

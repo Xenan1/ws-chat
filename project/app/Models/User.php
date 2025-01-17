@@ -6,6 +6,7 @@ use App\Interfaces\ImageableInterface;
 use App\Traits\HasImage;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Orchid\Platform\Models\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -26,6 +27,9 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property Collection $subscribers
  * @property Collection $subscriptions
  * @property Collection<DeviceToken> $deviceTokens
+ * @property ?self $referrer
+ * @property Collection<self> $referrals
+ * @property ?string $referral_link
  */
 class User extends Authenticatable implements JWTSubject, ImageableInterface
 {
@@ -42,6 +46,8 @@ class User extends Authenticatable implements JWTSubject, ImageableInterface
         'login',
         'email',
         'password',
+        'referral_link',
+        'referrer_id',
     ];
 
     /**
@@ -178,5 +184,30 @@ class User extends Authenticatable implements JWTSubject, ImageableInterface
     public function getChats(): Collection
     {
         return $this->chats;
+    }
+
+    public function referrer(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'referrer_id');
+    }
+
+    public function referrals(): HasMany
+    {
+        return $this->hasMany(self::class, 'referrer_id');
+    }
+
+    public function getReferrer(): ?self
+    {
+        return $this->referrer;
+    }
+
+    public function getReferrals(): Collection
+    {
+        return $this->referrals;
+    }
+
+    public function getReferralLink(): ?string
+    {
+        return $this->referral_link;
     }
 }

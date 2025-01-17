@@ -1,2 +1,4 @@
 db/data
 nginx/logs
+db/clickhouse/data
+db/clickhouse/logs

@@ -27,6 +27,27 @@ class RegisterUserRequest extends FormRequest
             'login' => ['required', 'string', Rule::unique('users', 'login')],
             'name' => ['required', 'string', 'min:2'],
             'password' => ['required', 'string', 'min:8'],
+            'referral' => ['sometimes', 'nullable', 'string']
         ];
+    }
+
+    public function getLogin(): string
+    {
+        return $this->input('login');
+    }
+
+    public function getName(): string
+    {
+        return $this->input('name');
+    }
+
+    public function getPassword(): string
+    {
+        return $this->input('password');
+    }
+
+    public function getReferral(): ?string
+    {
+        return $this->input('referral');
     }
 }

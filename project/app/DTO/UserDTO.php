@@ -3,6 +3,7 @@
 namespace App\DTO;
 
 use App\Http\Requests\RegisterUserRequest;
+use App\Services\UserService;
 
 readonly class UserDTO
 {
@@ -10,20 +11,25 @@ readonly class UserDTO
         public string $login,
         public string $name,
         public string $password,
+        public ?string $referralLink = null,
     ) {}
 
     public static function fromRequest(RegisterUserRequest $request): static
     {
-        $data = $request->validated();
-        return new static($data['login'], $data['name'], $data['password']);
+        return new static($request->getLogin(), $request->getName(), $request->getPassword(), $request->getReferral());
     }
 
     public function toCreatableArray(): array
     {
+        $userService = app(UserService::class);
+        $referrer = $userService->getReferralLinkUser($this->referralLink);
+
         return [
             'login'=> $this->login,
             'name'=> $this->name,
             'password'=> bcrypt($this->password),
+            'referrer_id' => $referrer?->getId(),
+            'referral_link' => $userService->generateReferralLink($this->login),
         ];
     }
 

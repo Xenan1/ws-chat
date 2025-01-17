@@ -33,4 +33,20 @@ class UserService
     {
         $subscriber->subscriptions()->detach($authorId);
     }
+
+    public function generateReferralLink(string $login): string
+    {
+        return md5($login);
+    }
+
+    public function setReferralLink(User $user, string $value): void
+    {
+        $user->referral_link = $value;
+        $user->saveQuietly();
+    }
+
+    public function getReferralLinkUser(?string $referralLink): ?User
+    {
+        return User::query()->where('referral_link', '=', $referralLink)->first();
+    }
 }
